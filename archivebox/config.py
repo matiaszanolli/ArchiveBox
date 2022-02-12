@@ -24,6 +24,7 @@ __package__ = 'archivebox'
 import os
 import os.path
 import io
+import random
 import re
 import sys
 import json
