@@ -28,8 +28,8 @@ services:
             # - SEARCH_BACKEND_ENGINE=sonic     # uncomment these if you enable sonic below
             # - SEARCH_BACKEND_HOST_NAME=sonic
             # - SEARCH_BACKEND_PASSWORD=SecretPassword
-        # dns:                                  # uncomment to use pihole below for ad/tracker blocking during archiving
-            # - pihole
+        dns:                                  # uncomment to use pihole below for ad/tracker blocking during archiving
+            - pihole
         volumes:
             - /mnt/archivebox-new:/data
             - ./archivebox:/archivebox    # for developers working on archivebox
@@ -107,7 +107,6 @@ networks:
 #         volumes:
 #             - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
 #             - ./data:/mnt/archivebox
-
 
     ### Example: run all your ArchiveBox traffic through a WireGuard VPN tunnel
 
