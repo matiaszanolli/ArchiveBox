@@ -17,17 +17,17 @@ cd "$REPO_DIR"
 
 which docker > /dev/null
 
-echo "[+] Building archivebox-redux:$VERSION docker image..."
-docker build . -t archivebox-redux \
-               -t archivebox-redux:latest \
-               -t archivebox-redux:$VERSION \
-               -t archivebox-redux:$SHORT_VERSION \
-               -t matiaszanolli/archivebox-redux:latest \
-               -t matiaszanolli/archivebox-redux:$VERSION \
-               -t matiaszanolli/archivebox-redux:$SHORT_VERSION \
-               -t docker.io/matiaszanolli/archivebox-redux:latest \
-               -t docker.io/matiaszanolli/archivebox-redux:$VERSION \
-               -t docker.io/matiaszanolli/archivebox-redux:$SHORT_VERSION \
-               -t docker.pkg.github.com/matiaszanolli/archivebox-redux/archivebox-redux:latest \
-               -t docker.pkg.github.com/matiaszanolli/archivebox-redux/archivebox-redux:$VERSION \
-               -t docker.pkg.github.com/matiaszanolli/archivebox-redux/archivebox-redux:$SHORT_VERSION
+echo "[+] Building archivebox:$VERSION docker image..."
+docker build . -t archivebox \
+               -t archivebox:latest \
+               -t archivebox:$VERSION \
+               -t archivebox:$SHORT_VERSION \
+               -t matiaszanolli/archivebox:latest \
+               -t matiaszanolli/archivebox:$VERSION \
+               -t matiaszanolli/archivebox:$SHORT_VERSION
+#               -t docker.io/archivebox/archivebox:latest \
+#               -t docker.io/archivebox/archivebox:$VERSION \
+#               -t docker.io/archivebox/archivebox:$SHORT_VERSION \
+#               -t docker.pkg.github.com/archivebox/archivebox/archivebox:latest \
+#               -t docker.pkg.github.com/archivebox/archivebox/archivebox:$VERSION \
+#               -t docker.pkg.github.com/archivebox/archivebox/archivebox:$SHORT_VERSION

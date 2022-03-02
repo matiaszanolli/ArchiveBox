@@ -26,7 +26,6 @@ services:
             - PG_DATABASE=archivebox
             - PG_USERNAME=archivebox
             - PG_PASSWORD=archivebox
-            - DEBUG=1
             # - SEARCH_BACKEND_ENGINE=sonic     # uncomment these if you enable sonic below
             # - SEARCH_BACKEND_HOST_NAME=sonic
             # - SEARCH_BACKEND_PASSWORD=SecretPassword
@@ -38,10 +37,6 @@ services:
             - /mnt/archivebox-new:/data
             - ./archivebox:/archivebox    # for developers working on archivebox
             - /home/archivebox/cache:/var/lib/cache
-        networks:
-            - default
-        extra_hosts:
-          - "host.docker.internal:host-gateway"
         deploy:
           resources:
             reservations:
@@ -58,8 +53,8 @@ services:
         ports:
             - '5432:5432'
         volumes: 
-            - /home/archivebox/db-data:/var/lib/postgresql/data
-    
+            - /home/archivebox/db-data:/var/lib/postgresql/data    
+
 networks:
     default:
         driver: bridge

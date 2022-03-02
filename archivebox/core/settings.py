@@ -180,8 +180,25 @@ CACHES = {
         'OPTIONS': {
             'size_limit': 2 ** 30   # 1 gigabyte
         },
-    },
+    }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': DATABASE_NAME,
+#         'OPTIONS': {
+#             'timeout': 60,
+#             'check_same_thread': False,
+#         },
+#         'TIME_ZONE': 'UTC',
+#         # DB setup is sometimes modified at runtime by setup_django() in config.py
+#     }
+# }
+
+# CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
+# CACHE_BACKEND = 'django.core.cache.backends.db.DatabaseCache'
+# CACHE_BACKEND = 'django.core.cache.backends.dummy.DummyCache'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

@@ -10,7 +10,6 @@
 #     docker buildx create --use
 #     docker buildx build . --platform=linux/amd64,linux/arm64,linux/arm/v7 --push -t archivebox/archivebox:latest -t archivebox/archivebox:dev
 
-
 FROM nvidia/cuda:11.6.2-runtime-ubuntu20.04
 
 LABEL name="archivebox-redux" \
@@ -38,6 +37,38 @@ ENV CODE_DIR=/app \
     LOCAL_DIR=/.local \
     ARCHIVEBOX_USER="archivebox" \
     PYTHON_VERSION=pypy3.9-7.3.9
+
+ARG TARGETARCH
+
+ENV NV_CUDA_LIB_VERSION 11.6.0-1
+
+ENV NV_NVTX_VERSION 11.6.55-1
+ENV NV_LIBNPP_VERSION 11.6.0.55-1
+ENV NV_LIBNPP_PACKAGE libnpp-11-6=${NV_LIBNPP_VERSION}
+ENV NV_LIBCUSPARSE_VERSION 11.7.1.55-1
+
+ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas-11-6
+ENV NV_LIBCUBLAS_VERSION 11.8.1.74-1
+ENV NV_LIBCUBLAS_PACKAGE ${NV_LIBCUBLAS_PACKAGE_NAME}=${NV_LIBCUBLAS_VERSION}
+
+ENV NV_LIBNCCL_PACKAGE_NAME libnccl2
+ENV NV_LIBNCCL_PACKAGE_VERSION 2.11.4-1
+ENV NCCL_VERSION 2.11.4-1
+ENV NV_LIBNCCL_PACKAGE ${NV_LIBNCCL_PACKAGE_NAME}=${NV_LIBNCCL_PACKAGE_VERSION}+cuda11.6
+
+ENV NV_NVTX_VERSION 11.6.55-1
+ENV NV_LIBNPP_VERSION 11.6.0.55-1
+ENV NV_LIBNPP_PACKAGE libnpp-11-6=${NV_LIBNPP_VERSION}
+ENV NV_LIBCUSPARSE_VERSION 11.7.1.55-1
+
+ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas-11-6
+ENV NV_LIBCUBLAS_VERSION 11.8.1.74-1
+ENV NV_LIBCUBLAS_PACKAGE ${NV_LIBCUBLAS_PACKAGE_NAME}=${NV_LIBCUBLAS_VERSION}
+
+ENV NV_LIBNCCL_PACKAGE_NAME libnccl2
+ENV NV_LIBNCCL_PACKAGE_VERSION 2.11.4-1
+ENV NCCL_VERSION 2.11.4-1
+ENV NV_LIBNCCL_PACKAGE ${NV_LIBNCCL_PACKAGE_NAME}=${NV_LIBNCCL_PACKAGE_VERSION}+cuda11.6
 
 ARG TARGETARCH
 
@@ -84,9 +115,23 @@ RUN apt-get update -qq \
         ffmpeg ripgrep postgresql-client libnspr4 libnss3 libxcomposite1 xdg-utils python-dev \
         fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst libgbm1 libgtk-3-0 \
         fonts-symbola fonts-noto fonts-freefont-ttf fonts-liberation libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libpq-dev \
+
     && deb=$(curl -w "%{filename_effective}" -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb) \
     && dpkg -i $deb && rm $deb && unset deb \
     && rm -rf /var/lib/apt/lists/*
+ 
+# Install CUDA Dependencies
+RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
+    cuda-libraries-11-6=${NV_CUDA_LIB_VERSION} \
+    ${NV_LIBNPP_PACKAGE} \
+    cuda-nvtx-11-6=${NV_NVTX_VERSION} \
+    libcusparse-11-6=${NV_LIBCUSPARSE_VERSION} \
+    ${NV_LIBCUBLAS_PACKAGE} \
+    ${NV_LIBNCCL_PACKAGE} \
+    && rm -rf /var/lib/apt/lists/*
+
+# Keep apt from auto upgrading the cublas and nccl packages. See https://gitlab.com/nvidia/container-images/cuda/-/issues/88
+RUN apt-mark hold ${NV_LIBCUBLAS_PACKAGE_NAME} ${NV_LIBNCCL_PACKAGE_NAME}
 
 # Install CUDA Dependencies
 RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
@@ -123,6 +168,9 @@ RUN npm ci
 # Install Python dependencies
 WORKDIR "$CODE_DIR"
 RUN python -m pip install --upgrade --quiet pip setuptools wheel \
+ENV PATH="${PATH}:$VENV_PATH/bin"
+RUN python3.10 -m venv --clear --symlinks "$VENV_PATH" \
+    && pip3.10 install --upgrade --quiet pip setuptools \
     && mkdir -p "$CODE_DIR/archivebox"
 ADD "./setup.py" "$CODE_DIR/"
 ADD "./package.json" "$CODE_DIR/archivebox/"
@@ -142,8 +190,7 @@ RUN python -c 'from distutils.core import run_setup; result = run_setup("./setup
 RUN apt-get purge -y build-essential python-dev python3-dev \
     && echo 'empty placeholder for setup.py to use' > "$CODE_DIR/archivebox/README.md" \
     && python3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires + result.extras_require["sonic"]))' > /tmp/requirements.txt \
-    && pip install -r /tmp/requirements.txt \
-    && pip install --upgrade youtube-dl yt-dlp \
+    && pip3 install --quiet -r /tmp/requirements.txt \
     && apt-get purge -y build-essential python-dev python3-dev \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
@@ -160,6 +207,7 @@ RUN apt-get purge -y build-essential python-dev python3-dev \
 # Install ArchiveBox Python package and its dependencies
 WORKDIR "$CODE_DIR"
 ADD . "$CODE_DIR"
+RUN pip3 install -e .
 
 RUN pip install -e . && \ 
     chmod -R 777 /root
