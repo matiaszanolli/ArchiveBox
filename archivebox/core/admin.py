@@ -60,10 +60,10 @@ class SnapshotActionForm(ActionForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         required=False,
-        widget=SelectMultiple(
-            AutocompleteTags(),
-            AutocompleteTagsAdminStub(),
-        ),
+        # widget=SelectMultiple(
+        #     AutocompleteTags(),
+        #     AutocompleteTagsAdminStub(),
+        # ),
     )
 
     # TODO: allow selecting actions for specific extractors? is this useful?
@@ -84,14 +84,14 @@ class SnapshotAdmin(SearchResultsAdminMixin, admin.ModelAdmin):
     readonly_fields = ('info', 'bookmarked', 'added', 'updated')
     search_fields = ('id', 'url', 'timestamp', 'title') #, 'tags__name')
     fields = ('timestamp', 'url', 'title', 'tags', *readonly_fields)
-    list_filter = ('added', 'updated', 'tags', 'archiveresult__status')
+    list_filter = ('added', 'updated', 'archiveresult__status')
     ordering = ['-added']
     actions = ["""add_tags', 'remove_tags',"""'update_titles', 'update_snapshots', 'resnapshot_snapshot', 'overwrite_snapshots', 'delete_snapshots']
     # autocomplete_fields = ['tags']
     inlines = [ArchiveResultInline]
     list_per_page = SNAPSHOTS_PER_PAGE
 
-    action_form = SnapshotActionForm
+    # action_form = SnapshotActionForm
 
     def get_urls(self):
         urls = super().get_urls()

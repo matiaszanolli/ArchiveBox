@@ -1,5 +1,6 @@
 __package__ = 'archivebox.core'
 
+from email.policy import default
 from django import forms
 
 from ..util import URL_REGEX
@@ -49,10 +50,12 @@ class AddLinkForm(forms.Form):
     overwrite = forms.BooleanField(
         label="Overwrite any existing Snapshots",
         initial=False,
+        required=False
     )
     index_only = forms.BooleanField(
         label="Add URLs to index without Snapshotting",
         initial=False,
+        required=False
     )
 
 # class TagWidgetMixin:
