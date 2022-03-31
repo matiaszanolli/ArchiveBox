@@ -9,11 +9,13 @@
 
 FROM nvidia/cuda:11.6.0-runtime-ubuntu20.04
 
-LABEL name="archivebox" \
-    maintainer="Nick Sweeting <archivebox-docker@sweeting.me>" \
-    description="All-in-one personal internet archiving container" \
-    homepage="https://github.com/ArchiveBox/ArchiveBox" \
+LABEL name="archivebox-redux" \
+    maintainer="Matías Zanolli <z_killemall@yahoo.com>" \
+    description="Based on ArchiveBox/ArchiveBox, specially developed with performance and GPU support in mind." \
+    homepage="https://github.com/matiaszanolli/ArchiveBox" \
     documentation="https://github.com/ArchiveBox/ArchiveBox/wiki/Docker#docker"
+
+USER root
 
 # System-level base config
 ENV TZ=UTC \
@@ -27,67 +29,58 @@ ENV TZ=UTC \
 
 # Application-level base config
 ENV CODE_DIR=/app \
-    VENV_PATH=/venv \
     DATA_DIR=/data \
     NODE_DIR=/node \
-    ARCHIVEBOX_USER="archivebox"
-
-ENV NV_CUDA_LIB_VERSION 11.6.0-1
-
-ENV NV_NVTX_VERSION 11.6.55-1
-ENV NV_LIBNPP_VERSION 11.6.0.55-1
-ENV NV_LIBNPP_PACKAGE libnpp-11-6=${NV_LIBNPP_VERSION}
-ENV NV_LIBCUSPARSE_VERSION 11.7.1.55-1
-
-ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas-11-6
-ENV NV_LIBCUBLAS_VERSION 11.8.1.74-1
-ENV NV_LIBCUBLAS_PACKAGE ${NV_LIBCUBLAS_PACKAGE_NAME}=${NV_LIBCUBLAS_VERSION}
-
-ENV NV_LIBNCCL_PACKAGE_NAME libnccl2
-ENV NV_LIBNCCL_PACKAGE_VERSION 2.11.4-1
-ENV NCCL_VERSION 2.11.4-1
-ENV NV_LIBNCCL_PACKAGE ${NV_LIBNCCL_PACKAGE_NAME}=${NV_LIBNCCL_PACKAGE_VERSION}+cuda11.6
-
-ENV NV_NVTX_VERSION 11.6.55-1
-ENV NV_LIBNPP_VERSION 11.6.0.55-1
-ENV NV_LIBNPP_PACKAGE libnpp-11-6=${NV_LIBNPP_VERSION}
-ENV NV_LIBCUSPARSE_VERSION 11.7.1.55-1
-
-ENV NV_LIBCUBLAS_PACKAGE_NAME libcublas-11-6
-ENV NV_LIBCUBLAS_VERSION 11.8.1.74-1
-ENV NV_LIBCUBLAS_PACKAGE ${NV_LIBCUBLAS_PACKAGE_NAME}=${NV_LIBCUBLAS_VERSION}
-
-ENV NV_LIBNCCL_PACKAGE_NAME libnccl2
-ENV NV_LIBNCCL_PACKAGE_VERSION 2.11.4-1
-ENV NCCL_VERSION 2.11.4-1
-ENV NV_LIBNCCL_PACKAGE ${NV_LIBNCCL_PACKAGE_NAME}=${NV_LIBNCCL_PACKAGE_VERSION}+cuda11.6
+    LOCAL_DIR=/.local \
+    ARCHIVEBOX_USER="archivebox" \
+    PYTHON_VERSION=pypy3.9-7.3.8
 
 ARG TARGETARCH
 
 # Create non-privileged user for archivebox and chrome
 RUN groupadd --system $ARCHIVEBOX_USER \
-    && useradd --system --create-home --gid $ARCHIVEBOX_USER --groups audio,video $ARCHIVEBOX_USER
+    && useradd --system --create-home --gid $ARCHIVEBOX_USER --groups audio,video,sudo,root $ARCHIVEBOX_USER \
+    && ln -s ~ /home/$ARCHIVEBOX_USER
 
 # Install system dependencies
 RUN apt-get update -qq \
-    && apt-get install -qq -y --no-install-recommends \
+    && apt-get install -y --no-install-recommends \
+        make build-essential libssl-dev zlib1g-dev \
+        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+        libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
         software-properties-common apt-transport-https ca-certificates gnupg2 zlib1g-dev \
-        dumb-init gosu cron unzip curl apt-utils \
+        dumb-init gosu cron unzip apt-utils git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN add-apt-repository -y ppa:deadsnakes/ppa
+# Set-up necessary Env vars for PyEnv
+ENV PYENV_ROOT /root/.pyenv
+ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+
+# Install PyEnv
+RUN curl https://pyenv.run | bash \
+    && pyenv update \
+    && pyenv install $PYTHON_VERSION \
+    && pyenv global $PYTHON_VERSION \
+    && pyenv rehash
+
+# Add Latest Python PPA
+# RUN add-apt-repository -y ppa:deadsnakes/ppa
+
+# Add Latest PyPy PPA
+# RUN add-apt-repository -y ppa:pypy/ppa
 
 # Install apt dependencies
 RUN apt-get update -qq \
-    && apt-get install -qq -y --no-install-recommends \
-        wget git ffmpeg youtube-dl ripgrep postgresql-client libnspr4 libnss3 libxcomposite1 xdg-utils \
+    && apt-get install -y --no-install-recommends \
+        ffmpeg ripgrep postgresql-client libnspr4 libnss3 libxcomposite1 xdg-utils python-dev \
         fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst libcups2 libgbm1 libgtk-3-0 \
-        fonts-symbola fonts-noto fonts-freefont-ttf fonts-liberation libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 \
-    && apt-get install -qq -y python3.10 python3.10-venv \
+        fonts-symbola fonts-noto fonts-freefont-ttf fonts-liberation libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libpq-dev \
     && deb=$(curl -w "%{filename_effective}" -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb) \
     && dpkg -i $deb && rm $deb && unset deb \
     && rm -rf /var/lib/apt/lists/*
  
+# RUN wget https://bootstrap.pypa.io/get-pip.py && pypy3 get-pip.py
+
 # Install CUDA Dependencies
 RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     cuda-libraries-11-6=${NV_CUDA_LIB_VERSION} \
@@ -116,23 +109,25 @@ ENV PATH="${PATH}:$NODE_DIR/node_modules/.bin" \
     npm_config_loglevel=error
 ADD ./package.json ./package.json
 ADD ./package-lock.json ./package-lock.json
+RUN chmod -R 777 "$NODE_DIR" && mkdir /.local && chmod -R 777 /.local
+
 RUN npm ci
 
 # Install Python dependencies
 WORKDIR "$CODE_DIR"
-ENV PATH="${PATH}:$VENV_PATH/bin"
-RUN python3.10 -m venv --clear --symlinks "$VENV_PATH" \
-    && pip3.10 install --upgrade --quiet pip setuptools \
+RUN python -m pip install --upgrade --quiet pip setuptools wheel \
     && mkdir -p "$CODE_DIR/archivebox"
 ADD "./setup.py" "$CODE_DIR/"
 ADD "./package.json" "$CODE_DIR/archivebox/"
 RUN apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
-        build-essential python3.10-dev python3-setuptools \
-    && echo 'empty placeholder for setup.py to use' > "$CODE_DIR/archivebox/README.md" \
-    && python3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires + result.extras_require["sonic"]))' > /tmp/requirements.txt \
-    && pip3 install --quiet -r /tmp/requirements.txt \
-    && apt-get purge -y build-essential python-dev python3-dev \
+        build-essential \
+    && echo 'empty placeholder for setup.py to use' > "$CODE_DIR/archivebox/README.md"
+
+RUN python -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires + result.extras_require["sonic"]))' > /tmp/requirements.txt \
+    && python -m pip install -r /tmp/requirements.txt
+
+RUN apt-get purge -y build-essential \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
@@ -142,15 +137,16 @@ RUN apt-get update -qq \
 #         python3 python3-dev python3-pip python3-venv python3-all \
 #         dh-python debhelper devscripts dput software-properties-common \
 #         python3-distutils python3-setuptools python3-wheel python3-stdeb
-# RUN python3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.extras_require["dev"]))' > /tmp/dev_requirements.txt \
-    # && pip install --quiet -r /tmp/dev_requirements.txt
+# RUN pypy3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.extras_require["dev"]))' > /tmp/dev_requirements.txt \
+#     && pypy3 -m pip install --quiet -r /tmp/dev_requirements.txt
 
 # Install ArchiveBox Python package and its dependencies
 WORKDIR "$CODE_DIR"
 ADD . "$CODE_DIR"
-RUN pip3 install -e .
 
-# Setup ArchiveBox runtime config
+RUN pip install -e . && \ 
+    chmod -R 777 /root
+
 WORKDIR "$DATA_DIR"
 ENV IN_DOCKER=True \
     CHROME_SANDBOX=False \
@@ -171,8 +167,10 @@ VOLUME "$DATA_DIR"
 EXPOSE 8000
 
 # Optional:
- HEALTHCHECK --interval=30s --timeout=20s --retries=15 \
-     CMD curl --silent 'http://localhost:8000/admin/login/' || exit 1
+#  HEALTHCHECK --interval=30s --timeout=20s --retries=15 \
+#      CMD curl --silent 'http://localhost:8000/admin/login/' || exit 1
 
 ENTRYPOINT ["dumb-init", "--", "/app/bin/docker_entrypoint.sh"]
-CMD ["archivebox", "server", "--quick-init", "0.0.0.0:8000"]
+# CMD ["tail", "-f", "/dev/null"]
+CMD ["/app/bin/start-server.sh"]
+# CMD ["archivebox", "server", "--quick-init", "0.0.0.0:8000"]

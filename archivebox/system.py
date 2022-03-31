@@ -140,6 +140,19 @@ def copy_and_overwrite(from_path: Union[str, Path], to_path: Union[str, Path]):
         atomic_write(to_path, contents)
 
 
+def get_tree_size(path):
+    total_size = 0
+    dirs = [path]
+    while dirs:
+        next_dir = dirs.pop()
+        with os.scandir(next_dir) as it:
+            for entry in it:
+                if entry.is_dir(follow_symlinks=False):
+                    dirs.append(entry.path)
+                else:
+                    total_size += entry.stat(follow_symlinks=False).st_size
+    return total_size
+
 @enforce_types
 def get_dir_size(path: Union[str, Path], recursive: bool=True, pattern: Optional[str]=None) -> Tuple[int, int, int]:
     """get the total disk size of a given directory, optionally summing up 

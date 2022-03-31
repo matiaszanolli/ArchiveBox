@@ -6,6 +6,8 @@ import re
 import logging
 import tempfile
 
+from psycopg2cffi import compat
+
 from pathlib import Path
 from django.utils.crypto import get_random_string
 
@@ -25,6 +27,8 @@ from ..config import (
 IS_MIGRATING = 'makemigrations' in sys.argv[:3] or 'migrate' in sys.argv[:3]
 IS_TESTING = 'test' in sys.argv[:3] or 'PYTEST_CURRENT_TEST' in os.environ
 IS_SHELL = 'shell' in sys.argv[:3] or 'shell_plus' in sys.argv[:3]
+
+compat.register()
 
 ################################################################################
 ### Django Core Settings

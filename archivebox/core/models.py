@@ -14,6 +14,8 @@ from django.core.cache import cache
 from django.urls import reverse
 from django.db.models import Case, When, Value, IntegerField
 from django.contrib.auth.models import User   # noqa
+from queryable_properties.properties import queryable_property
+
 
 from ..config import ARCHIVE_DIR, ARCHIVE_DIR_NAME
 from ..system import get_dir_size
@@ -176,7 +178,7 @@ class Snapshot(models.Model):
     def archive_path(self):
         return '{}/{}'.format(ARCHIVE_DIR_NAME, self.timestamp)
 
-    @cached_property
+    @queryable_property(cached=True)
     def archive_size(self):
         cache_key = f'{str(self.id)[:12]}-{(self.updated or self.added).timestamp()}-size'
 

@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
+source /root/.bashrc
+export PYENV_ROOT=/root/.pyenv
+export PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+
 DATA_DIR="${DATA_DIR:-/data}"
 ARCHIVEBOX_USER="${ARCHIVEBOX_USER:-archivebox}"
+PYTHON_VERSION="${PYTHON_VERSION}"
 
+pyenv global $PYTHON_VERSION
+pyenv rehash
 
 # Set the archivebox user UID & GID
 if [[ -n "$PUID" && "$PUID" != 0 ]]; then
@@ -35,11 +42,17 @@ if [[ "$1" == /* || "$1" == "echo" || "$1" == "archivebox" ]]; then
     # e.g. "archivebox init"
     #      "/bin/bash"
     #      "echo"
-    exec gosu "$ARCHIVEBOX_USER" bash -c "$*"
+    (
+        echo exec gosu "$ARCHIVEBOX_USER" bash -c "python -m $*"
+    )
+    if [ $? != 0 ]
+    then
+        exec gosu "$ARCHIVEBOX_USER" bash -c "$*"
+    fi
 else
     # no command given, assume args were meant to be passed to archivebox cmd
     # e.g. "add https://example.com"
     #      "manage createsupseruser"
     #      "server 0.0.0.0:8000"
-    exec gosu "$ARCHIVEBOX_USER" bash -c "archivebox $*"
+    exec gosu "$ARCHIVEBOX_USER" bash -c "python -m archivebox $*"
 fi

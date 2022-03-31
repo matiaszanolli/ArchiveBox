@@ -47,7 +47,8 @@ INSTALL_REQUIRES = [
     "w3lib>=1.22.0",
     "ipython>5.0.0",
     "pymemcache>=3.5.1",
-    "psycopg2-binary>=2.9.3",
+    "psycopg2cffi>=2.9.0",
+    "django-queryable-properties>=1.8.1"
 ]
 EXTRAS_REQUIRE = {
     'sonic': [

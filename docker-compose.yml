@@ -15,6 +15,7 @@ services:
         build: .                              # for developers working on archivebox
         image: ${DOCKER_IMAGE:-matiaszanolli/archivebox:latest}
         restart: always
+        # command: tail -f /dev/null
         command: server --quick-init 0.0.0.0:8000
         ports:
             - 8000:8000
@@ -28,8 +29,8 @@ services:
             # - SEARCH_BACKEND_ENGINE=sonic     # uncomment these if you enable sonic below
             # - SEARCH_BACKEND_HOST_NAME=sonic
             # - SEARCH_BACKEND_PASSWORD=SecretPassword
-        dns:                                  # uncomment to use pihole below for ad/tracker blocking during archiving
-            - pihole
+        # dns:                                  # uncomment to use pihole below for ad/tracker blocking during archiving
+        #     - pihole
         volumes:
             - /mnt/archivebox-new:/data
             - ./archivebox:/archivebox    # for developers working on archivebox

@@ -5,6 +5,7 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 .github/
+.python_version
 
 venv/
 .venv/
