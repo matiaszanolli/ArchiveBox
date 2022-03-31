@@ -3,7 +3,11 @@
 <h1>ArchiveBox-Redux<br/><sub>Open-source self-hosted web archiving.</sub></h1>
 <h2>Fork of <a href="https://github.com/ArchiveBox/ArchiveBox">ArchiveBox with many improvements in progress.</h2>
 
-<h4>The final purpose of this project is to get as many features, updates and fixes into the main ArchiveBox branch, yet have a bleeding-edge workspace to work on them.</h4>
+<h4>The final purpose of this project is to provide a blazing fast, optimized and stable version of ArchiveBox, specially designed for use in servers.</h4>
+
+<h3>⚡️  Running using <a href="https://www.pypy.org/">PyPy</a>'s powerful JIT compiler, it reduces Django's and Python's general overload, leaving all CPU and RAM for those hungry extractors!</h3>
+<h3>⚡️  Built based on the <a href="https://hub.docker.com/r/nvidia/cuda">NVIDIA CUDA Docker image,</a> it's definitely not thought for the casual user, yet a beefy server (or an old gaming rig) will take load to the GPU whenever possible. (ALPHA, though stable)</h3>
+
 
 ▶️ <a href="https://github.com/ArchiveBox/ArchiveBox/wiki/Quickstart">Quickstart</a> |
 <a href="https://demo.archivebox.io">Demo</a> |
