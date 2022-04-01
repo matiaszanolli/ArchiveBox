@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'core',
 
     'django_extensions',
+    'django_admin_shell'
 ]
 
 

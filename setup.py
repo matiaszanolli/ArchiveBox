@@ -48,7 +48,8 @@ INSTALL_REQUIRES = [
     "ipython>5.0.0",
     "pymemcache>=3.5.1",
     "psycopg2cffi>=2.9.0",
-    "django-queryable-properties>=1.8.1"
+    "django-queryable-properties>=1.8.1",
+    "django-admin-shell>=1.0.0",
 ]
 EXTRAS_REQUIRE = {
     'sonic': [

@@ -30,6 +30,7 @@ urlpatterns = [
 
 
     path('accounts/', include('django.contrib.auth.urls')),
+    path('admin/shell/', include('django_admin_shell.urls')),
     path('admin/', admin.site.urls),
 
     path('health/', HealthCheckView.as_view(), name='healthcheck'),
