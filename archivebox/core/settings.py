@@ -180,12 +180,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
 # CACHE_BACKEND = 'django.core.cache.backends.db.DatabaseCache'
 # CACHE_BACKEND = 'django.core.cache.backends.dummy.DummyCache'
-CACHE_BACKEND = 'django.core.cache.backends.memcached.PyMemcacheCache'
+CACHE_BACKEND = 'django.core.cache.backends.redis.RedisCache'
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        'LOCATION': 'memcached:11211',
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://cache:6379',
     }
 }
 
