@@ -66,9 +66,6 @@ networks:
 volumes:
     cache:
         driver: local
-    netdataconfig:
-    netdatalib:
-    netdatacache:
 # cache:
     #     image: 'redis:latest'
     #     ports:

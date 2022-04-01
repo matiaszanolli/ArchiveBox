@@ -48,7 +48,6 @@ INSTALL_REQUIRES = [
     "croniter>=1.3.4",
     "w3lib>=1.22.0",
     "ipython>=8.2.0",
-    "redis>=4.2.2",
     "psycopg2cffi>=2.9.0",
     "youtube_dl>=2021.12.17",
     "django-queryable-properties>=1.8.1",
