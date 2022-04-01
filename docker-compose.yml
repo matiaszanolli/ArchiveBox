@@ -26,6 +26,7 @@ services:
             - PG_DATABASE=archivebox
             - PG_USERNAME=archivebox
             - PG_PASSWORD=archivebox
+            - DEBUG=1
             # - SEARCH_BACKEND_ENGINE=sonic     # uncomment these if you enable sonic below
             # - SEARCH_BACKEND_HOST_NAME=sonic
             # - SEARCH_BACKEND_PASSWORD=SecretPassword
