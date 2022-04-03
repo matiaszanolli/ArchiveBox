@@ -1,9 +1,9 @@
 {
-  "name": "archivebox",
-  "version": "0.6.3",
-  "description": "ArchiveBox: The self-hosted internet archive",
-  "author": "Nick Sweeting <archivebox-npm@sweeting.me>",
-  "repository": "github:ArchiveBox/ArchiveBox",
+  "name": "archivebox-redux",
+  "version": "0.0.1",
+  "description": "ArchiveBox-Redux: Blazing fast ArchiveBox version for servers",
+  "author": "Matías Zanolli <z_killemall@yahoo.com>",
+  "repository": "github:matiaszanolli/archivebox-redux",
   "license": "MIT",
   "dependencies": {
     "@postlight/mercury-parser": "^2.2.1",
