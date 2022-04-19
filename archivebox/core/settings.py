@@ -18,8 +18,6 @@ from ..config import (
     PACKAGE_DIR,
     TEMPLATES_DIR_NAME,
     CUSTOM_TEMPLATES_DIR,
-    SQL_INDEX_FILENAME,
-    OUTPUT_DIR,
     LOGS_DIR,
     TIME_ZONE,
 )
@@ -163,19 +161,6 @@ DATABASES = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': DATABASE_NAME,
-#         'OPTIONS': {
-#             'timeout': 60,
-#             'check_same_thread': False,
-#         },
-#         'TIME_ZONE': 'UTC',
-#         # DB setup is sometimes modified at runtime by setup_django() in config.py
-#     }
-# }
 
 # CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
 # CACHE_BACKEND = 'django.core.cache.backends.db.DatabaseCache'

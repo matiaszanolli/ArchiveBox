@@ -24,20 +24,17 @@ __package__ = 'archivebox'
 import os
 import os.path
 import io
-import random
 import re
 import sys
 import json
 import getpass
 import platform
 import shutil
-import sqlite3
-from urllib import response
 import django
 
 from hashlib import md5
 from pathlib import Path
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Optional, Type, Tuple, Dict, Union, List
 from subprocess import run, PIPE, DEVNULL
 from configparser import ConfigParser

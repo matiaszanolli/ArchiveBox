@@ -13,7 +13,7 @@ from hashlib import sha256
 from urllib.parse import urlparse, quote, unquote
 from html import escape, unescape
 from datetime import datetime, timezone, timedelta
-from random import choice, randrange
+from random import randrange
 from dateparser import parse as dateparser
 from requests.exceptions import RequestException, ReadTimeout
 
