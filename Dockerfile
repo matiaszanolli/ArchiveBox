@@ -70,8 +70,6 @@ ENV NV_LIBNCCL_PACKAGE_VERSION 2.11.4-1
 ENV NCCL_VERSION 2.11.4-1
 ENV NV_LIBNCCL_PACKAGE ${NV_LIBNCCL_PACKAGE_NAME}=${NV_LIBNCCL_PACKAGE_VERSION}+cuda11.6
 
-ARG TARGETARCH
-
 # Create non-privileged user for archivebox and chrome
 RUN groupadd --system $ARCHIVEBOX_USER \
     && useradd --system --create-home --gid $ARCHIVEBOX_USER --groups audio,video,sudo,root $ARCHIVEBOX_USER \
@@ -119,19 +117,6 @@ RUN apt-get update -qq \
     && deb=$(curl -w "%{filename_effective}" -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb) \
     && dpkg -i $deb && rm $deb && unset deb \
     && rm -rf /var/lib/apt/lists/*
- 
-# Install CUDA Dependencies
-RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
-    cuda-libraries-11-6=${NV_CUDA_LIB_VERSION} \
-    ${NV_LIBNPP_PACKAGE} \
-    cuda-nvtx-11-6=${NV_NVTX_VERSION} \
-    libcusparse-11-6=${NV_LIBCUSPARSE_VERSION} \
-    ${NV_LIBCUBLAS_PACKAGE} \
-    ${NV_LIBNCCL_PACKAGE} \
-    && rm -rf /var/lib/apt/lists/*
-
-# Keep apt from auto upgrading the cublas and nccl packages. See https://gitlab.com/nvidia/container-images/cuda/-/issues/88
-RUN apt-mark hold ${NV_LIBCUBLAS_PACKAGE_NAME} ${NV_LIBNCCL_PACKAGE_NAME}
 
 # Install CUDA Dependencies
 RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
