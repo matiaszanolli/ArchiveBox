@@ -7,13 +7,13 @@
 #     docker run -v "$PWD/data":/data -it archivebox manage createsuperuser
 #     docker run -v "$PWD/data":/data -p 8000:8000 archivebox server
 
-FROM nvidia/cuda:11.6.0-runtime-ubuntu20.04
+FROM nvidia/cuda:11.6.2-runtime-ubuntu20.04
 
 LABEL name="archivebox-redux" \
     maintainer="Matías Zanolli <z_killemall@yahoo.com>" \
     description="Based on ArchiveBox/ArchiveBox, specially developed with performance and GPU support in mind." \
-    homepage="https://github.com/matiaszanolli/ArchiveBox" \
-    documentation="https://github.com/ArchiveBox/ArchiveBox/wiki/Docker#docker"
+    homepage="https://github.com/matiaszanolli/ArchiveBox-redux" \
+    documentation="https://github.com/matiaszanolli/ArchiveBox-redux/wiki/Docker#docker"
 
 USER root
 
@@ -33,7 +33,7 @@ ENV CODE_DIR=/app \
     NODE_DIR=/node \
     LOCAL_DIR=/.local \
     ARCHIVEBOX_USER="archivebox" \
-    PYTHON_VERSION=pypy3.9-7.3.8
+    PYTHON_VERSION=pypy3.9-7.3.9
 
 ARG TARGETARCH
 
@@ -63,12 +63,6 @@ RUN curl https://pyenv.run | bash \
     && pyenv global $PYTHON_VERSION \
     && pyenv rehash
 
-# Add Latest Python PPA
-# RUN add-apt-repository -y ppa:deadsnakes/ppa
-
-# Add Latest PyPy PPA
-# RUN add-apt-repository -y ppa:pypy/ppa
-
 # Install apt dependencies
 RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends \
@@ -78,8 +72,6 @@ RUN apt-get update -qq \
     && deb=$(curl -w "%{filename_effective}" -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb) \
     && dpkg -i $deb && rm $deb && unset deb \
     && rm -rf /var/lib/apt/lists/*
- 
-# RUN wget https://bootstrap.pypa.io/get-pip.py && pypy3 get-pip.py
 
 # Install CUDA Dependencies
 RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \

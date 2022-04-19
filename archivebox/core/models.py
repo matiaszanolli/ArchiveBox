@@ -277,7 +277,7 @@ class ArchiveResult(models.Model):
     cmd = JSONField()
     pwd = models.CharField(max_length=256)
     cmd_version = models.CharField(max_length=128, default=None, null=True, blank=True)
-    output = models.CharField(max_length=1024)
+    output = models.TextField()
     start_ts = models.DateTimeField(db_index=True)
     end_ts = models.DateTimeField()
     status = models.CharField(max_length=16, choices=STATUS_CHOICES)

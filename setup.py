@@ -8,9 +8,9 @@ from pathlib import Path
 PKG_NAME = "archivebox"
 DESCRIPTION = "Self-hosted internet archiving solution."
 LICENSE = "MIT"
-AUTHOR = "Nick Sweeting"
-AUTHOR_EMAIL="git@nicksweeting.com"
-REPO_URL = "https://github.com/ArchiveBox/ArchiveBox"
+AUTHOR = "Matías Zanolli"
+AUTHOR_EMAIL="z_killemall@yahoo.com"
+REPO_URL = "https://github.com/matiaszanolli/archivebox-redux"
 PROJECT_URLS = {
     "Source":           f"{REPO_URL}",
     "Documentation":    f"{REPO_URL}/wiki",
@@ -38,15 +38,15 @@ INSTALL_REQUIRES = [
     # ./archivebox/vendor/
     "requests>=2.27.1",
     "mypy-extensions>=0.4.3",
-    "django>=4.0.3,<4.1.0",
+    "django>=4.0.4,<4.1.0",
     "django-extensions>=3.1.5",
     "dateparser>=1.1.1",
-    "yt-dlp>=2022.3.8.2",
+    "yt-dlp>=2022.4.8",
     "python-crontab>=2.6.0",
     "croniter>=1.3.4",
     "w3lib>=1.22.0",
     "ipython>=8.2.0",
-    "redis>=4.2.1",
+    "redis>=4.2.2",
     "psycopg2cffi>=2.9.0",
     "django-queryable-properties>=1.8.1",
     "django-admin-shell>=1.0.0",

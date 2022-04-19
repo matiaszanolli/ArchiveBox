@@ -13,7 +13,7 @@ version: '3.9'   # '3.9' or greater also works
 services:
     archivebox:
         build: .                              # for developers working on archivebox
-        image: ${DOCKER_IMAGE:-matiaszanolli/archivebox:latest}
+        image: ${DOCKER_IMAGE:-matiaszanolli/archivebox-redux:0.0.2}
         restart: always
         # command: tail -f /dev/null
         command: server --quick-init 0.0.0.0:8000
@@ -32,6 +32,8 @@ services:
             # - SEARCH_BACKEND_PASSWORD=SecretPassword
         # dns:                                  # uncomment to use pihole below for ad/tracker blocking during archiving
         #     - pihole
+        depends_on:
+            - cache
         volumes:
             - /mnt/archivebox-new:/data
             - ./archivebox:/archivebox    # for developers working on archivebox

@@ -1,6 +1,6 @@
 {
   "name": "archivebox-redux",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ArchiveBox-Redux: Blazing fast ArchiveBox version for servers",
   "author": "Matías Zanolli <z_killemall@yahoo.com>",
   "repository": "github:matiaszanolli/archivebox-redux",
