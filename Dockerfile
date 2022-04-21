@@ -76,12 +76,19 @@ RUN wget https://buildbot.pypy.org/nightly/py3.9/pypy-c-jit-latest-linux64.tar.b
 
 # Install apt dependencies
 RUN apt-get update -qq \
+<<<<<<< HEAD
     && apt-get install -y --no-install-recommends \
         ffmpeg ripgrep postgresql-client libnspr4 libnss3 libxcomposite1 xdg-utils python-dev \
         fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst libcups2 libgbm1 libgtk-3-0 \
         fonts-symbola fonts-noto fonts-freefont-ttf fonts-liberation libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libpq-dev \
     && deb=$(curl -w "%{filename_effective}" -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb) \
     && dpkg -i $deb && rm $deb && unset deb \
+=======
+    && apt-get install -qq -y --no-install-recommends \
+        wget curl chromium git ffmpeg youtube-dl ripgrep \
+        fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto fonts-freefont-ttf \
+    && ln -s /usr/bin/chromium /usr/bin/chromium-browser \
+>>>>>>> eb81d41 (bump Dockerfile base image version and install yt-dlp)
     && rm -rf /var/lib/apt/lists/*
 
 # Install CUDA Dependencies
@@ -98,10 +105,17 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
 RUN apt-mark hold ${NV_LIBCUBLAS_PACKAGE_NAME} ${NV_LIBNCCL_PACKAGE_NAME}
 
 # Install Node environment
+<<<<<<< HEAD
 RUN curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
     && echo 'deb https://deb.nodesource.com/node_16.x focal main' >> /etc/apt/sources.list \
     && apt-get update
 RUN apt-get install  -y --no-install-recommends \
+=======
+RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
+    && echo 'deb https://deb.nodesource.com/node_17.x buster main' >> /etc/apt/sources.list \
+    && apt-get update -qq \
+    && apt-get install -qq -y --no-install-recommends \
+>>>>>>> eb81d41 (bump Dockerfile base image version and install yt-dlp)
         nodejs \
     && npm install -g npm \
     && rm -rf /var/lib/apt/lists/*
@@ -164,7 +178,8 @@ ENV IN_DOCKER=True \
     USE_READABILITY=True \
     READABILITY_BINARY="$NODE_DIR/node_modules/.bin/readability-extractor" \
     USE_MERCURY=True \
-    MERCURY_BINARY="$NODE_DIR/node_modules/.bin/mercury-parser"
+    MERCURY_BINARY="$NODE_DIR/node_modules/.bin/mercury-parser" \
+    YOUTUBEDL_BINARY="yt-dlp"
 
 # Print version for nice docker finish summary
 # RUN archivebox version
