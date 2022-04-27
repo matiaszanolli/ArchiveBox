@@ -8,6 +8,8 @@ from django.views.generic.base import RedirectView
 
 from core.views import HomepageView, SnapshotView, PublicIndexView, AddView, HealthCheckView
 
+from . import settings
+
 
 # print('DEBUG', settings.DEBUG)
 

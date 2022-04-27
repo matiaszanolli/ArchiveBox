@@ -13,7 +13,7 @@ version: '3.9'   # '3.9' or greater also works
 services:
     archivebox:
         build: .                              # for developers working on archivebox
-        image: ${DOCKER_IMAGE:-matiaszanolli/archivebox-redux:0.0.2}
+        image: ${DOCKER_IMAGE:-matiaszanolli/archivebox-redux:latest}
         restart: always
         # command: tail -f /dev/null
         command: server --quick-init 0.0.0.0:8000
@@ -37,6 +37,7 @@ services:
         volumes:
             - /mnt/archivebox-new:/data
             - ./archivebox:/archivebox    # for developers working on archivebox
+            - /home/archivebox/cache:/var/lib/cache
         networks:
             - default
         extra_hosts:
@@ -48,14 +49,50 @@ services:
                 - driver: nvidia
                   count: 1
                   capabilities: [gpu]
-    
-    cache:
-        image: 'redis:latest'
+    db:
+        image: postgres:14.1-alpine
+        restart: always
+        environment:
+            - POSTGRES_USER=archivebox
+            - POSTGRES_PASSWORD=archivebox
         ports:
-            - '6379:6379'
-        command: redis-server --save 20 1 --loglevel warning
+            - '5432:5432'
         volumes: 
-            - cache:/data
+            - /home/archivebox/db-data:/var/lib/postgresql/data
+    
+    # cache:
+    #     image: 'redis:latest'
+    #     ports:
+    #         - '6379:6379'
+    #     command: redis-server --save 20 1 --loglevel warning
+    #     volumes: 
+    #         - cache:/data
+    #     networks:
+    #         - default
+    netdata:
+        image: netdata/netdata
+        container_name: netdata
+        hostname: 192.168.1.8 # set to fqdn of host
+        ports:
+            - 19999:19999
+        restart: unless-stopped
+        cap_add:
+            - SYS_PTRACE
+        security_opt:
+            - apparmor:unconfined
+        volumes:
+            - /mnt/archivebox-new/netdataconfig:/etc/netdata
+            - /mnt/archivebox-new/netdatalib:/var/lib/netdata
+            - /mnt/archivebox-new/netdatacache:/var/cache/netdata
+            - /etc/passwd:/host/etc/passwd:ro
+            - /etc/group:/host/etc/group:ro
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /etc/os-release:/host/etc/os-release:ro
+        environment:
+            - NETDATA_CLAIM_TOKEN=Junyu-WQSQJJ2-h3qMxmemxSCnr_yDJXHYuo6GwYgeEBDzifuzCyMJRSy2ByIyzTK4TRJSRkZUbNmiBlYY3_yESDQjXIIXvLHjuNF-jZ2GNeQ4kIhUXXT7qa1w0Rom-5zczptrQ
+            - NETDATA_CLAIM_URL=https://app.netdata.cloud
+            - NETDATA_CLAIM_ROOMS=2fe4a14a-af33-4ade-a693-3ba086912772
         networks:
             - default
 
@@ -69,6 +106,9 @@ networks:
 volumes:
     cache:
         driver: local
+    netdataconfig:
+    netdatalib:
+    netdatacache:
    
     ### Example: To run pihole in order to block ad/tracker requests during archiving,
     # uncomment this block and set up pihole using its admin interface

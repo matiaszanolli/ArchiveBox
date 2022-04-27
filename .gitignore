@@ -6,6 +6,7 @@ __pycache__/
 .eggs/
 tests/out/
 .idea
+.python-version
 
 # Python and Node dependencies
 venv/

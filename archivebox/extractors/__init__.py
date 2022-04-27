@@ -77,7 +77,7 @@ def archive_link(link: Link, overwrite: bool=False, methods: Optional[Iterable[s
     except Snapshot.DoesNotExist:
         snapshot = write_link_to_sql_index(link)
 
-    ARCHIVE_METHODS = get_default_archive_methods()
+    ARCHIVE_METHODS: list = get_default_archive_methods()
     
     if methods:
         ARCHIVE_METHODS = [

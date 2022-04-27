@@ -1,6 +1,5 @@
 __package__ = 'archivebox.extractors'
 
-
 from pathlib import Path
 from typing import Optional, List, Dict, Tuple
 from collections import defaultdict

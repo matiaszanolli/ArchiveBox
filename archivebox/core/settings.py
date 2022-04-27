@@ -20,6 +20,7 @@ from ..config import (
     CUSTOM_TEMPLATES_DIR,
     LOGS_DIR,
     TIME_ZONE,
+    OUTPUT_DIR
 )
 
 IS_MIGRATING = 'makemigrations' in sys.argv[:3] or 'migrate' in sys.argv[:3]
@@ -165,13 +166,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
 # CACHE_BACKEND = 'django.core.cache.backends.db.DatabaseCache'
 # CACHE_BACKEND = 'django.core.cache.backends.dummy.DummyCache'
-CACHE_BACKEND = 'django.core.cache.backends.redis.RedisCache'
+# CACHE_BACKEND = 'django.core.cache.backends.redis.RedisCache'
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://cache:6379',
-    }
+        'BACKEND': 'diskcache.DjangoCache',
+        'LOCATION': '/var/lib/cache',
+        'TIMEOUT': 300,
+        # ^-- Django setting for default timeout of each key.
+        'SHARDS': 8,
+        'DATABASE_TIMEOUT': 0.030,  # 30 milliseconds
+        # ^-- Timeout for each DjangoCache database transaction.
+        'OPTIONS': {
+            'size_limit': 2 ** 30   # 1 gigabyte
+        },
+    },
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

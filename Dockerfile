@@ -63,6 +63,13 @@ RUN curl https://pyenv.run | bash \
     && pyenv global $PYTHON_VERSION \
     && pyenv rehash
 
+# Update PyPy version to current upstream
+RUN wget https://buildbot.pypy.org/nightly/py3.9/pypy-c-jit-latest-linux64.tar.bz2 \
+    && tar -xvf pypy-c-jit-latest-linux64.tar.bz2 \
+    && cp -rf pypy-c-jit-*-linux64 ${PYENV_ROOT}/versions/${PYTHON_VERSION} \
+    && rm -rf pypy-c-jit-*-linux64 \
+    && rm pypy-c-jit-latest-linux64.tar.bz2
+
 # Install apt dependencies
 RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends \
@@ -116,7 +123,7 @@ RUN apt-get update -qq \
         build-essential \
     && echo 'empty placeholder for setup.py to use' > "$CODE_DIR/archivebox/README.md"
 
-RUN python -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires + result.extras_require["sonic"]))' > /tmp/requirements.txt \
+RUN python -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires))' > /tmp/requirements.txt \
     && python -m pip install -r /tmp/requirements.txt
 
 RUN apt-get purge -y build-essential \

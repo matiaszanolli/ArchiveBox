@@ -40,6 +40,8 @@ INSTALL_REQUIRES = [
     "mypy-extensions>=0.4.3",
     "django>=4.0.4,<4.1.0",
     "django-extensions>=3.1.5",
+    # "django-redis>=5.2.0",
+    "diskcache>=5.4.0",
     "dateparser>=1.1.1",
     "yt-dlp>=2022.4.8",
     "python-crontab>=2.6.0",
@@ -52,9 +54,9 @@ INSTALL_REQUIRES = [
     "django-admin-shell>=1.0.0",
 ]
 EXTRAS_REQUIRE = {
-    'sonic': [
-        "sonic-client>=0.0.5",
-    ],
+    # 'sonic': [
+    #     "sonic-client>=0.0.5",
+    # ],
     'dev': [
         "setuptools",
         "twine",
@@ -136,8 +138,6 @@ setuptools.setup(
         "Environment :: Console",
         "Environment :: Web Environment",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Framework :: Django",
         "Typing :: Typed",
