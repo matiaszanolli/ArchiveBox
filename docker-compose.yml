@@ -55,17 +55,53 @@ services:
             - '5432:5432'
         volumes: 
             - /home/archivebox/db-data:/var/lib/postgresql/data    
+    
+    # cache:
+    #     image: 'redis:latest'
+    #     ports:
+    #         - '6379:6379'
+    #     command: redis-server --save 20 1 --loglevel warning
+    #     volumes: 
+    #         - cache:/data
+    #     networks:
+    #         - default
+    # netdata:
+    #     image: netdata/netdata
+    #     container_name: netdata
+    #     hostname: 192.168.1.8 # set to fqdn of host
+    #     ports:
+    #         - 19999:19999
+    #     restart: unless-stopped
+    #     cap_add:
+    #         - SYS_PTRACE
+    #     security_opt:
+    #         - apparmor:unconfined
+    #     volumes:
+    #         - /mnt/archivebox-new/netdataconfig:/etc/netdata
+    #         - /mnt/archivebox-new/netdatalib:/var/lib/netdata
+    #         - /mnt/archivebox-new/netdatacache:/var/cache/netdata
+    #         - /etc/passwd:/host/etc/passwd:ro
+    #         - /etc/group:/host/etc/group:ro
+    #         - /proc:/host/proc:ro
+    #         - /sys:/host/sys:ro
+    #         - /etc/os-release:/host/etc/os-release:ro
+    #     environment:
+    #         - NETDATA_CLAIM_TOKEN=Junyu-WQSQJJ2-h3qMxmemxSCnr_yDJXHYuo6GwYgeEBDzifuzCyMJRSy2ByIyzTK4TRJSRkZUbNmiBlYY3_yESDQjXIIXvLHjuNF-jZ2GNeQ4kIhUXXT7qa1w0Rom-5zczptrQ
+    #         - NETDATA_CLAIM_URL=https://app.netdata.cloud
+    #         - NETDATA_CLAIM_ROOMS=2fe4a14a-af33-4ade-a693-3ba086912772
+    #     networks:
+    #         - default
 
-networks:
-    default:
-        driver: bridge
-        ipam:
-            config:
-                 - subnet: 172.16.57.0/24
+# networks:
+#     default:
+#         driver: bridge
+#         ipam:
+#             config:
+#                  - subnet: 172.16.57.0/24
 
-volumes:
-    cache:
-        driver: local
+# volumes:
+#     cache:
+#         driver: local
 # cache:
     #     image: 'redis:latest'
     #     ports:

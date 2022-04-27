@@ -180,7 +180,7 @@ CACHES = {
         'OPTIONS': {
             'size_limit': 2 ** 30   # 1 gigabyte
         },
-    }
+    },
 }
 
 # DATABASES = {
