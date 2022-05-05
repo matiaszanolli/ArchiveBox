@@ -26,6 +26,7 @@ def flush(snapshot_ids: Generator[str, None, None]):
 
 @enforce_types
 def search(text: str) -> List[str]:
+    raise Exception("Ignoring ripgrep until faster alternative is found.")
     if not RIPGREP_VERSION:
         raise Exception("ripgrep binary not found, install ripgrep to use this search backend")
 

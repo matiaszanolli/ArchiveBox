@@ -133,7 +133,7 @@ elif which brew > /dev/null; then
     python3 -m pip install --upgrade --ignore-installed archivebox
 elif which pkg > /dev/null; then
     echo "[+] Installing ArchiveBox system dependencies using pkg..."
-    sudo pkg install -y python37 py37-pip py37-sqlite3 node npm wget curl youtube_dl ffmpeg git ripgrep
+    sudo pkg install -y python37 py37-pip py37-sqlite3 node npm wget curl yt_dlp ffmpeg git ripgrep
     sudo pkg install -y chromium
     echo ""
     echo "[+] Installing ArchiveBox python dependencies using pip..."

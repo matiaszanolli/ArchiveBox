@@ -50,6 +50,7 @@ INSTALL_REQUIRES = [
     "ipython>=8.2.0",
     "redis>=4.2.2",
     "psycopg2cffi>=2.9.0",
+    "youtube_dl>=2021.12.17",
     "django-queryable-properties>=1.8.1",
     "django-admin-shell>=1.0.0",
 ]

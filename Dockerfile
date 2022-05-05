@@ -43,10 +43,14 @@ RUN groupadd --system $ARCHIVEBOX_USER \
     && ln -s ~ /home/$ARCHIVEBOX_USER
 
 # Install system dependencies
-RUN apt-get update -qq \
+ADD ./deb /deb
+RUN apt-key del 7fa2af80 \
+#    && dpkg -i /deb/cuda-keyring_1.0-1_all.deb \
+    && apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub \
+    && apt-get update -qq \
     && apt-get install -y --no-install-recommends \
         make build-essential libssl-dev zlib1g-dev \
-        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm-11 \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
         software-properties-common apt-transport-https ca-certificates gnupg2 zlib1g-dev \
         dumb-init gosu cron unzip apt-utils git \
@@ -123,6 +127,11 @@ RUN apt-get update -qq \
         build-essential \
     && echo 'empty placeholder for setup.py to use' > "$CODE_DIR/archivebox/README.md"
 
+# RUN ln -s /usr/bin/llvm-config-11 /usr/bin/llvm-config
+
+# Comment until numba is stable enough to run under PyPy3
+# RUN python -m pip install numpy llvmlite \ 
+    # && python -m pip install numba && \
 RUN python -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires))' > /tmp/requirements.txt \
     && python -m pip install -r /tmp/requirements.txt
 

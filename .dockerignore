@@ -14,9 +14,14 @@ venv/
 build/
 dist/
 pip_dist/
+deb_dist/
+asusctl/
 !pip_dist/archivebox.egg-info/requires.txt
 brew_dist/
 assets/
 
 data/
 output/
+
+.idea/
+.git/
