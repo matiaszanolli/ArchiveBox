@@ -32,8 +32,8 @@ services:
             # - SEARCH_BACKEND_PASSWORD=SecretPassword
         # dns:                                  # uncomment to use pihole below for ad/tracker blocking during archiving
         #     - pihole
-        depends_on:
-            - cache
+        # depends_on:
+        #     - cache
         volumes:
             - /mnt/archivebox-new:/data
             - ./archivebox:/archivebox    # for developers working on archivebox
