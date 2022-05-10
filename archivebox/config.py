@@ -1168,7 +1168,6 @@ def setup_django(out_dir: Path=None, check_db=False, config: ConfigDict=CONFIG, 
             ts = datetime.now(timezone.utc).strftime('%Y-%m-%d__%H:%M:%S')
             f.write(f"\n> {command}; ts={ts} version={config['VERSION']} docker={config['IN_DOCKER']} is_tty={config['IS_TTY']}\n")
 
-
         # if check_db:
         #     # Enable WAL mode in sqlite3
         #     from django.db import connection
@@ -1176,6 +1175,11 @@ def setup_django(out_dir: Path=None, check_db=False, config: ConfigDict=CONFIG, 
         #         current_mode = cursor.execute("PRAGMA journal_mode")
         #         if current_mode != 'wal':
         #             cursor.execute("PRAGMA journal_mode=wal;")
+
+                # Set max blocking delay for concurrent writes and write sync mode
+                # https://litestream.io/tips/#busy-timeout
+                # cursor.execute("PRAGMA busy_timeout = 5000;")
+                # cursor.execute("PRAGMA synchronous = NORMAL;")
 
             # Create cache table in DB if needed
             try:
