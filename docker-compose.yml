@@ -60,7 +60,6 @@ services:
         volumes: 
             - /home/archivebox/db-data:/var/lib/postgresql/data
     
-    
 networks:
     default:
         driver: bridge
@@ -127,16 +126,16 @@ volumes:
     # curl -O https://raw.githubusercontent.com/ArchiveBox/ArchiveBox/master/etc/sonic.cfg
     # after starting, backfill any existing Snapshots into the index: docker-compose run archivebox update --index-only
 
-    #     image: valeriansaliou/sonic:v1.3.0
-    #     expose:
-    #         - 1491
-    #     environment:
-    #         - SEARCH_BACKEND_PASSWORD=SecretPassword
-    #     volumes:
-    #         - ./sonic.cfg:/etc/sonic.cfg:ro
-    #         - ./data/sonic:/var/lib/sonic/store
-    #     networks:
-    #         - default
+    # sonic:
+    #    image: valeriansaliou/sonic:v1.3.1
+    #    expose:
+    #        - 1491
+    #    environment:
+    #        - SEARCH_BACKEND_PASSWORD=SecretPassword
+    #    volumes:
+    #        - ./sonic.cfg:/etc/sonic.cfg:ro
+    #        - ./data/sonic:/var/lib/sonic/store
+
 
 
     # Example: Run scheduled imports in a docker instead of using cron on the
