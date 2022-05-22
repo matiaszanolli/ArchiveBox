@@ -38,6 +38,8 @@ services:
             - /mnt/archivebox-new:/data
             - ./archivebox:/archivebox    # for developers working on archivebox
             - /home/archivebox/cache:/var/lib/cache
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
         deploy:
           resources:
             reservations:
@@ -45,6 +47,8 @@ services:
                 - driver: nvidia
                   count: 1
                   capabilities: [gpu]
+        networks:
+            - default
     db:
         image: postgres:14.1-alpine
         restart: always
@@ -54,8 +58,16 @@ services:
         ports:
             - '5432:5432'
         volumes: 
-            - /home/archivebox/db-data:/var/lib/postgresql/data    
+            - /home/archivebox/db-data:/var/lib/postgresql/data  
+        networks:
+            - default 
     
+networks:
+    default:
+        driver: bridge
+        ipam:
+            config:
+                 - subnet: 172.16.57.0/24
     # cache:
     #     image: 'redis:latest'
     #     ports:
@@ -91,13 +103,6 @@ services:
     #         - NETDATA_CLAIM_ROOMS=2fe4a14a-af33-4ade-a693-3ba086912772
     #     networks:
     #         - default
-
-# networks:
-#     default:
-#         driver: bridge
-#         ipam:
-#             config:
-#                  - subnet: 172.16.57.0/24
 
 # volumes:
 #     cache:
