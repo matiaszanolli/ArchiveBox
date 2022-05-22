@@ -73,7 +73,7 @@ def save_media(link: Link, out_dir: Optional[Path]=None, timeout: int=MEDIA_TIME
 
     # add video description and subtitles to full-text index
     index_texts = [
-        text_file.read_text(encoding='utf-8').strip()
+        text_file.read_text(encoding='utf-8', errors='ignore').strip()
         for text_file in (
             *output_path.glob('*.description'),
             *output_path.glob('*.srt'),
