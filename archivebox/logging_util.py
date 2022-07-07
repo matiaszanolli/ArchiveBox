@@ -9,7 +9,6 @@ import argparse
 from math import log
 from multiprocessing import Process
 from pathlib import Path
-
 from datetime import datetime, timezone
 from dataclasses import dataclass
 from typing import Any, Optional, List, Dict, Union, IO, TYPE_CHECKING
@@ -297,7 +296,6 @@ def log_indexing_finished(out_path: str):
 
 
 ### Archiving Stage
-
 def log_archiving_started(num_links: int, resume: Optional[float]=None):
 
     start_ts = datetime.now(timezone.utc)

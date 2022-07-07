@@ -1,12 +1,13 @@
 {
   "name": "archivebox-redux",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "ArchiveBox-Redux: Blazing fast ArchiveBox version for servers",
   "author": "Matías Zanolli <z_killemall@yahoo.com>",
   "repository": "github:matiaszanolli/archivebox-redux",
   "license": "MIT",
   "dependencies": {
     "@postlight/mercury-parser": "git+https://github.com/postlight/mercury-parser.git",
+    "core-js": "==3.4",
     "readability-extractor": "git+https://github.com/ArchiveBox/readability-extractor.git",
     "single-file": "git+https://github.com/gildas-lormeau/SingleFile.git"
   }

@@ -139,18 +139,18 @@ def copy_and_overwrite(from_path: Union[str, Path], to_path: Union[str, Path]):
             contents = src.read()
         atomic_write(to_path, contents)
 
-
 def get_tree_size(path):
     total_size = 0
     dirs = [path]
     while dirs:
         next_dir = dirs.pop()
-        with os.scandir(next_dir) as it:
-            for entry in it:
-                if entry.is_dir(follow_symlinks=False):
-                    dirs.append(entry.path)
-                else:
-                    total_size += entry.stat(follow_symlinks=False).st_size
+        if Path(next_dir).is_dir():
+            with os.scandir(next_dir) as it:
+                for entry in it:
+                    if entry.is_dir(follow_symlinks=False):
+                        dirs.append(entry.path)
+                    else:
+                        total_size += entry.stat(follow_symlinks=False).st_size
     return total_size
 
 @enforce_types
@@ -159,20 +159,21 @@ def get_dir_size(path: Union[str, Path], recursive: bool=True, pattern: Optional
        recursively and limiting to a given filter list
     """
     num_bytes, num_dirs, num_files = 0, 0, 0
-    for entry in os.scandir(path):
-        if (pattern is not None) and (pattern not in entry.path):
-            continue
-        if entry.is_dir(follow_symlinks=False):
-            if not recursive:
+    if Path(path).is_dir():
+        for entry in os.scandir(path):
+            if (pattern is not None) and (pattern not in entry.path):
                 continue
-            num_dirs += 1
-            bytes_inside, dirs_inside, files_inside = get_dir_size(entry.path)
-            num_bytes += bytes_inside
-            num_dirs += dirs_inside
-            num_files += files_inside
-        else:
-            num_bytes += entry.stat(follow_symlinks=False).st_size
-            num_files += 1
+            if entry.is_dir(follow_symlinks=False):
+                if not recursive:
+                    continue
+                num_dirs += 1
+                bytes_inside, dirs_inside, files_inside = get_dir_size(entry.path)
+                num_bytes += bytes_inside
+                num_dirs += dirs_inside
+                num_files += files_inside
+            else:
+                num_bytes += entry.stat(follow_symlinks=False).st_size
+                num_files += 1
     return num_bytes, num_dirs, num_files
 
 

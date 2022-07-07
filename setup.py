@@ -36,9 +36,9 @@ INSTALL_REQUIRES = [
     # stdeb.cfg (apt), archivebox.rb (brew), Dockerfile, etc.
     # if there is no apt python3-package equivalent, then vendor it instead in
     # ./archivebox/vendor/
-    "requests>=2.27.1",
+    "requests>=2.28.0",
     "mypy-extensions>=0.4.3",
-    "django>=4.0.4,<4.1.0",
+    "django>=4.0.5,<4.1.0",
     "django-extensions>=3.1.5",
     # "django-redis>=5.2.0",
     "diskcache>=5.4.0",
@@ -47,11 +47,10 @@ INSTALL_REQUIRES = [
     "python-crontab>=2.6.0",
     "croniter>=1.3.5",
     "w3lib>=1.22.0",
-    "ipython>=8.2.0",
-    "ipython>=8.3.0",
+    "ipython>=8.4.0",
     "psycopg2cffi>=2.9.0",
     "youtube_dl>=2021.12.17",
-    "django-queryable-properties>=1.8.1",
+    "django-queryable-properties>=1.8.2",
     "django-admin-shell>=1.0.0",
 ]
 EXTRAS_REQUIRE = {

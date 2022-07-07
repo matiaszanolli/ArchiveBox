@@ -4,7 +4,6 @@ from django.utils import timezone
 
 from ..config import PUBLIC_SNAPSHOTS
 
-
 def detect_timezone(request, activate: bool=True):
     gmt_offset = (request.COOKIES.get('GMT_OFFSET') or '').strip()
     tz = None

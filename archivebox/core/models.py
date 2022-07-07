@@ -16,7 +16,6 @@ from django.db.models import Case, When, Value, IntegerField
 from django.contrib.auth.models import User   # noqa
 from queryable_properties.properties import queryable_property
 
-
 from ..config import ARCHIVE_DIR, ARCHIVE_DIR_NAME
 from ..system import get_dir_size
 from ..util import parse_date, base_url, hashurl
@@ -84,7 +83,6 @@ class Tag(models.Model):
                 i = 1 if i is None else i+1
         else:
             return super().save(*args, **kwargs)
-
 
 class Snapshot(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -266,7 +264,6 @@ class ArchiveResultManager(models.Manager):
             precedence = [ When(extractor=method, then=Value(precedence)) for method, precedence in ARCHIVE_METHODS_INDEXING_PRECEDENCE ]
             qs = qs.annotate(indexing_precedence=Case(*precedence, default=Value(1000),output_field=IntegerField())).order_by('indexing_precedence')
         return qs
-
 
 class ArchiveResult(models.Model):
     id = models.AutoField(primary_key=True, serialize=False, verbose_name='ID')
