@@ -251,7 +251,7 @@ def chrome_args(**options) -> List[str]:
             '--run-all-compositor-stages-before-draw',
             '--hide-scrollbars',
             '--single-process',
-            # '--no-zygote',
+            '--no-zygote',
         )
 
     if not options['CHECK_SSL_VALIDITY']:

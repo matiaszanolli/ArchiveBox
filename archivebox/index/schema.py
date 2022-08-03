@@ -222,7 +222,14 @@ class Link:
 
     def as_snapshot(self):
         from core.models import Snapshot
-        return Snapshot.objects.get(url=self.url)
+        try:
+            return Snapshot.objects.get(url=self.url)
+        except Exception:
+            from ..extractors import archive_link
+            snap = Snapshot(url=self.url)
+            snap.save()
+            archive_link(snap.as_link())
+            return snap
 
     @classmethod
     def from_json(cls, json_info, guess=False):

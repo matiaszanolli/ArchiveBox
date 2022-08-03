@@ -34,6 +34,8 @@ ENV TZ=UTC \
 ENV CODE_DIR=/app \
     DATA_DIR=/data \
     NODE_DIR=/node \
+    NODE_VERSION=16 \
+    NVM_DIR=/node/.nvm \
     LOCAL_DIR=/.local \
     ARCHIVEBOX_USER="archivebox" \
     PYTHON_VERSION=pypy3.9-7.3.9
@@ -49,8 +51,8 @@ RUN groupadd --system $ARCHIVEBOX_USER \
 ADD ./deb /deb
 RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends \
-        make build-essential libssl-dev zlib1g-dev pipewire libegl1 \
-        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm-11 libgles2-mesa \
+        make build-essential gfortran libssl-dev zlib1g-dev pipewire libegl1 \
+        libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libgles2-mesa \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
         software-properties-common apt-transport-https ca-certificates gnupg2 zlib1g-dev \
         dumb-init gosu cron unzip apt-utils git \
@@ -79,21 +81,27 @@ RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends \
         ffmpeg ripgrep libnspr4 libnss3 libxcomposite1 xdg-utils python3-dev python-dev-is-python3 \
         fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst libgbm1 libgtk-3-0 \
-        nodejs npm node-gyp node-tar node-mkdirp node-colors node-cacache node-write-file-atomic \
         fonts-symbola fonts-noto fonts-liberation libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libpq5 libpq-dev \
     && deb=$(curl -w "%{filename_effective}" -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb) \
     && dpkg -i $deb && rm $deb && unset deb \
     && rm -rf /var/lib/apt/lists/*
 
+# Install nvm and Node
+RUN mkdir -p $NVM_DIR \
+    && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.1/install.sh | bash \
+    && . $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
 # Install Node dependencies
 WORKDIR "$NODE_DIR"
-ENV PATH="${PATH}:$NODE_DIR/node_modules/.bin" \
+ENV PATH="${PATH}:${NVM_DIR}:$NODE_DIR/node_modules/.bin" \
     npm_config_loglevel=error
 ADD ./package.json ./package.json
-ADD ./package-lock.json ./package-lock.json
+# ADD ./package-lock.json ./package-lock.json
 RUN chmod -R 777 "$NODE_DIR" && mkdir /.local && chmod -R 777 /.local
-
-RUN npm ci
+RUN . $NVM_DIR/nvm.sh && npm i yarn && yarn install
 
 # Install Python dependencies
 WORKDIR "$CODE_DIR"
@@ -101,14 +109,9 @@ RUN python -m pip install --upgrade --quiet pip setuptools wheel \
     && mkdir -p "$CODE_DIR/archivebox"
 ADD "./setup.py" "$CODE_DIR/"
 ADD "./package.json" "$CODE_DIR/archivebox/"
-RUN apt-get update -qq \
-    && apt-get install -qq -y --no-install-recommends \
-        build-essential \
-    && echo 'empty placeholder for setup.py to use' > "$CODE_DIR/archivebox/README.md"
+ADD "./README.md" "$CODE_DIR/archivebox/"
 
-RUN apt-get purge -y build-essential \
-    && echo 'empty placeholder for setup.py to use' > "$CODE_DIR/archivebox/README.md" \
-    && python3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires))' > /tmp/requirements.txt \
+RUN python3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires))' > /tmp/requirements.txt \
     && pip3 install --quiet -r /tmp/requirements.txt \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*

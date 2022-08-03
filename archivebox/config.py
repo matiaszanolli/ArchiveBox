@@ -113,6 +113,7 @@ CONFIG_SCHEMA: Dict[str, ConfigDefaultDict] = {
         'SAVE_SCREENSHOT':          {'type': bool,  'default': True, 'aliases': ('FETCH_SCREENSHOT',)},
         'SAVE_DOM':                 {'type': bool,  'default': True, 'aliases': ('FETCH_DOM',)},
         'SAVE_HEADERS':             {'type': bool,  'default': True, 'aliases': ('FETCH_HEADERS',)},
+        'SAVE_KEYWORDS':             {'type': bool,  'default': True, 'aliases': ('FETCH_KEYWORDS',)},
         'SAVE_WARC':                {'type': bool,  'default': True, 'aliases': ('FETCH_WARC',)},
         'SAVE_GIT':                 {'type': bool,  'default': True, 'aliases': ('FETCH_GIT',)},
         'SAVE_MEDIA':               {'type': bool,  'default': True, 'aliases': ('FETCH_MEDIA',)},
@@ -150,6 +151,8 @@ CONFIG_SCHEMA: Dict[str, ConfigDefaultDict] = {
                                                                 '--no-abort-on-error',
                                                                 '--geo-bypass',
                                                                 '--add-metadata',
+                                                                '--external-downloader=ffmpeg', 
+                                                                '--external-downloader-args=\'-hwaccel_output_format cuda -c:v h264_nvenc -preset slow\''\
                                                                 '--max-filesize={}'.format(c['MEDIA_MAX_SIZE']),
                                                                 ]},
                                                                     
@@ -201,7 +204,7 @@ CONFIG_SCHEMA: Dict[str, ConfigDefaultDict] = {
         'SINGLEFILE_BINARY':        {'type': str,   'default': lambda c: bin_path('single-file')},
         'READABILITY_BINARY':       {'type': str,   'default': lambda c: bin_path('readability-extractor')},
         'MERCURY_BINARY':           {'type': str,   'default': lambda c: bin_path('mercury-parser')},
-        'YOUTUBEDL_BINARY':         {'type': str,   'default': 'youtube-dl'},
+        'YOUTUBEDL_BINARY':         {'type': str,   'default': 'yt-dlp'},
         'NODE_BINARY':              {'type': str,   'default': '/usr/bin/node'},
         'RIPGREP_BINARY':           {'type': str,   'default': 'rg'},
         'CHROME_BINARY':            {'type': str,   'default': None},
