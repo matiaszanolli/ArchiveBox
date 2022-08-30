@@ -9,6 +9,7 @@
 <h3>⚡️  Built based on the <a href="https://hub.docker.com/r/nvidia/cuda">NVIDIA CUDA Docker image,</a> it's definitely not thought for the casual user, yet a beefy server (or an old gaming rig) will take load to the GPU whenever possible. (ALPHA, though stable)</h3>
 <h3>⚡️  Automatic keyword extraction using KEYBert, a state of the art deep-learning based library with a web-optimized multilanguage model</h3>
 <h3>⚡️  Many calls to libraries like `curl` or `wget` being handled natively and in a more intelligent way (less failures and less messy subprocesses) </h3>
+<h3>⚡️Better subprocess handling (No idle tasks!)</h3>
 
 
 ▶️ <a href="https://github.com/ArchiveBox/ArchiveBox/wiki/Quickstart">Quickstart</a> |
@@ -30,9 +31,12 @@ curl -sSL 'https://get.archivebox.io' | sh
 
 **ArchiveBox-Redux is basically the server alternative to ArchiveBox.**
 
+First of all, robustness if what you need and it's what you'll have. Backed by the latest PostgreSQL server and 
+
 The only requirement you have to fulfill for this moment to run ArchiveBox-Redux is a CUDA-capable card and have the proper drivers (or CUDA Toolkit in Linux), as well as a recent Docker release. 
 
-As far as a CPU-only version, I plan on expanding the using a less accurate model like YAKE for CPU users, which is still pretty good and has an extremely good performance on CPU users. But why let our GPU go to waste if we have one, right?
+As far as a CPU-only version, you can use the new CPU-only docker-compose file and try how keyword extraction works for you. You can disable it from the settings if you find it too heavy to run. 
+I plan on using a less accurate model like YAKE for CPU users, which is still pretty good and has an extremely good performance on CPU.
 
 
 **You can feed it URLs one at a time, or schedule regular imports** from browser bookmarks or history, feeds like RSS, bookmark services like Pocket/Pinboard, and more. See <a href="#input-formats">input formats</a> for a full list.
@@ -106,10 +110,6 @@ ls ./archive/*/index.json                 # or browse directly via the filesyste
 
 # Quickstart
 
-**🖥&nbsp; Supported OSs:** Linux/BSD, macOS, Windows (Docker/WSL) &nbsp; **👾&nbsp; CPUs:** amd64, x86, arm8, arm7 <sup>(raspi>=3)</sup>
-
-<br/>
-
 #### ✳️&nbsp; Easy Setup
 
 <details>
@@ -173,174 +173,6 @@ See <a href="#%EF%B8%8F-cli-usage">below</a> for more usage examples using the C
 See <a href="https://github.com/ArchiveBox/ArchiveBox/blob/dev/bin/setup.sh"><code>setup.sh</code></a> for the source code of the auto-install script.<br/>
 See <a href="https://docs.sweeting.me/s/against-curl-sh">"Against curl | sh as an install method"</a> blog post for my thoughts on the shortcomings of this install method.
 <br/><br/>
-</details>
-
-<br/>
-
-#### 🛠&nbsp; Package Manager Setup
-
-<a name="Manual-Setup"></a>
-<details>
-<summary><b><img src="https://user-images.githubusercontent.com/511499/117448075-49597580-af0c-11eb-91ba-f34fff10096b.png" alt="aptitude" height="28px" align="top"/> <code>apt</code></b> (Ubuntu/Debian)</summary>
-<br/>
-<ol>
-<li>Add the ArchiveBox repository to your sources.<br/>
-<pre lang="bash"><code style="white-space: pre-line"># On Ubuntu == 20.04, add the sources automatically:
-sudo apt install software-properties-common
-sudo add-apt-repository -u ppa:archivebox/archivebox
-</code></pre>
-<pre lang="bash"><code style="white-space: pre-line"># On Ubuntu >= 20.10 or <= 19.10, or other Debian-style systems, add the sources manually:
-echo "deb http://ppa.launchpad.net/archivebox/archivebox/ubuntu focal main" | sudo tee /etc/apt/sources.list.d/archivebox.list
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C258F79DCC02E369
-sudo apt update
-</code></pre>
-</li>
-<li>Install the ArchiveBox package using <code>apt</code>.
-<pre lang="bash"><code style="white-space: pre-line">sudo apt install archivebox
-sudo python3 -m pip install --upgrade --ignore-installed archivebox   # pip needed because apt only provides a broken older version of Django
-</code></pre>
-</li>
-<li>Create a new empty directory and initalize your collection (can be anywhere).
-<pre lang="bash"><code style="white-space: pre-line">mkdir ~/archivebox && cd ~/archivebox
-archivebox init --setup           # if any problems, install with pip instead
-</code></pre>
-</li>
-<li>Optional: Start the server then login to the Web UI <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> ⇢ Admin.
-<pre lang="bash"><code style="white-space: pre-line">archivebox server 0.0.0.0:8000
-# completely optional, CLI can always be used without running a server
-# archivebox [subcommand] [--args]
-</code></pre>
-</li>
-</ol>
-
-See <a href="#%EF%B8%8F-cli-usage">below</a> for more usage examples using the CLI, Web UI, or filesystem/SQL/Python to manage your archive.<br/>
-See the <a href="https://github.com/ArchiveBox/debian-archivebox"><code>debian-archivebox</code></a> repo for more details about this distribution.
-<br/><br/>
-</details>
-
-<details>
-<summary><b><img src="https://user-images.githubusercontent.com/511499/117447803-f2ec3700-af0b-11eb-87d3-671d114f011d.png" alt="homebrew" height="28px" align="top"/> <code>brew</code></b> (macOS)</summary>
-<br/>
-<ol>
-<li>Install <a href="https://brew.sh/#install">Homebrew</a> on your system (if not already installed).</li>
-<li>Install the ArchiveBox package using <code>brew</code>.
-<pre lang="bash"><code style="white-space: pre-line">brew tap archivebox/archivebox
-brew install archivebox
-</code></pre>
-</li>
-<li>Create a new empty directory and initalize your collection (can be anywhere).
-<pre lang="bash"><code style="white-space: pre-line">mkdir ~/archivebox && cd ~/archivebox
-archivebox init --setup         # if any problems, install with pip instead
-</code></pre>
-</li>
-<li>Optional: Start the server then login to the Web UI <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> ⇢ Admin.
-<pre lang="bash"><code style="white-space: pre-line">archivebox server 0.0.0.0:8000
-# completely optional, CLI can always be used without running a server
-# archivebox [subcommand] [--args]
-</code></pre>
-</li>
-</ol>
-
-See <a href="#%EF%B8%8F-cli-usage">below</a> for more usage examples using the CLI, Web UI, or filesystem/SQL/Python to manage your archive.<br/>
-See the <a href="https://github.com/ArchiveBox/homebrew-archivebox"><code>homebrew-archivebox</code></a> repo for more details about this distribution.
-<br/><br/>
-</details>
-
-<details>
-<summary><b><img src="https://user-images.githubusercontent.com/511499/117447613-ba4c5d80-af0b-11eb-8f89-1d98e31b6a79.png" alt="Pip" height="28px" align="top"/> <code>pip</code></b> (macOS/Linux/Windows)</summary>
-<br/>
-<ol>
-
-<li>Install <a href="https://realpython.com/installing-python/">Python >= v3.7</a> and <a href="https://nodejs.org/en/download/package-manager/">Node >= v14</a> on your system (if not already installed).</li>
-<li>Install the ArchiveBox package using <code>pip3</code>.
-<pre lang="bash"><code style="white-space: pre-line">pip3 install archivebox
-</code></pre>
-</li>
-<li>Create a new empty directory and initalize your collection (can be anywhere).
-<pre lang="bash"><code style="white-space: pre-line">mkdir ~/archivebox && cd ~/archivebox
-archivebox init --setup
-# install any missing extras like wget/git/ripgrep/etc. manually as needed
-</code></pre>
-</li>
-<li>Optional: Start the server then login to the Web UI <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> ⇢ Admin.
-<pre lang="bash"><code style="white-space: pre-line">archivebox server 0.0.0.0:8000
-# completely optional, CLI can always be used without running a server
-# archivebox [subcommand] [--args]
-</code></pre>
-</li>
-</ol>
-
-See <a href="#%EF%B8%8F-cli-usage">below</a> for more usage examples using the CLI, Web UI, or filesystem/SQL/Python to manage your archive.<br/>
-See the <a href="https://github.com/ArchiveBox/pip-archivebox"><code>pip-archivebox</code></a> repo for more details about this distribution.
-<br/><br/>
-</details>
-
-<details>
-<summary><img src="https://user-images.githubusercontent.com/511499/118077361-f0616580-b381-11eb-973c-ee894a3349fb.png" alt="Arch" height="28px" align="top"/> <code>pacman</code> / <img src="https://user-images.githubusercontent.com/511499/118077946-29e6a080-b383-11eb-94f0-d4871da08c3f.png" alt="FreeBSD" height="28px" align="top"/> <code>pkg</code> / <img src="https://user-images.githubusercontent.com/511499/118077861-002d7980-b383-11eb-86a7-5936fad9190f.png" alt="Nix" height="28px" align="top"/> <code>nix</code> (Arch/FreeBSD/NixOS/more)</summary>
-<br/>
-<ul>
-<li>Arch: <a href="https://aur.archlinux.org/packages/archivebox/"><code>yay -S archivebox</code></a> (contributed by <a href="https://github.com/imlonghao"><code>@imlonghao</code></a>)</li>
-<li>FreeBSD: <a href="https://github.com/ArchiveBox/ArchiveBox#%EF%B8%8F-easy-setup"><code>curl -sSL 'https://get.archivebox.io' | sh</code></a> (uses <code>pkg</code> + <code>pip3</code> under-the-hood)</li>
-<li>Nix: <a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/misc/archivebox/default.nix"><code>nix-env --install archivebox</code></a> (contributed by <a href="https://github.com/siraben"><code>@siraben</code></a>)</li>
-<li>More: <a href="https://github.com/ArchiveBox/ArchiveBox/issues/new"><i>contribute another distribution...!</i></a></li>
-</ul>
-See <a href="#%EF%B8%8F-cli-usage">below</a> for usage examples using the CLI, Web UI, or filesystem/SQL/Python to manage your archive.
-<br/><br/>
-</details>
-
-<br/>
-
-#### 🎗&nbsp; Other Options
-
-<details>
-<summary><b><img src="https://user-images.githubusercontent.com/511499/117447182-29758200-af0b-11eb-97bd-58723fee62ab.png" alt="Docker" height="28px" align="top"/> <code>docker</code> + <img src="https://user-images.githubusercontent.com/511499/117447263-4316c980-af0b-11eb-928d-eaf1292ac646.png" alt="Electron" height="28px" align="top"/> <code>electron</code> Desktop App</b> (macOS/Linux/Windows)</summary>
-<br/>
-<ol>
-<li>Install <a href="https://docs.docker.com/get-docker/">Docker</a> on your system (if not already installed).</li>
-<li>Download a binary release for your OS or build the native app from source<br/>
-<ul>
-<li>macOS: <a href="https://github.com/ArchiveBox/ArchiveBox/releases/download/v0.6.2/Electron-ArchiveBox-macOS-x64-0.6.2.app.zip" download><code>ArchiveBox.app.zip</code></a></li>
-<li>Linux: <code>ArchiveBox.deb</code> (alpha: <a href="https://github.com/ArchiveBox/electron-archivebox#quickstart">build manually</a>)</li>
-<li>Windows: <code>ArchiveBox.exe</code> (beta: <a href="https://github.com/ArchiveBox/electron-archivebox#quickstart">build manually</a>)</li>
-</ul>
-</li>
-</ol>
-<img src="https://i.imgur.com/QPHUS5C.png" width="320px">
-<br/>
-<i>✨ Alpha (contributors wanted!)</i>: for more info, see the: <a href="https://github.com/ArchiveBox/electron-archivebox">Electron ArchiveBox</a> repo.
-  <br/>
-</details>
-
-<details>
-<summary><img src="https://user-images.githubusercontent.com/511499/117448723-1663b180-af0d-11eb-837f-d43959227810.png" alt="paid" height="27px" align="top"/> Paid hosting solutions (cloud VPS)</summary>
-<br/>
-<ul>
-<li><a href="https://monadical.com">
- <img src="https://img.shields.io/badge/Custom_Managed_Solution-Monadical.com-%231a1a1a.svg?style=flat" height="22px"/>
-</a> (<a href="https://monadical.com/contact-us.html">for larger setups, get a quote</a>)</li>
-<br/>
-None of these hosting providers are officially endorsed:<br/>
-<sub><i>(most still require manual setup or manual periodic updating using the methods above)</i></sub>
-<br/><br/>
-<li><a href="https://www.stellarhosted.com/archivebox/"><img src="https://img.shields.io/badge/Semi_Managed_Hosting-StellarHosted.com-%23193f7e.svg?style=flat" height="22px"/></a> (USD $29-250/mo, <a href="https://www.stellarhosted.com/archivebox/#pricing">pricing</a>)</li>
-<li><a href="https://www.pikapods.com/pods?run=archivebox"><img src="https://img.shields.io/badge/Semi_Managed_Hosting-PikaPods.com-%2343a047.svg?style=flat" height="22px"/></a> (from USD $2.6/mo)</li>
-<li><a href="https://m.do.co/c/cbc4c0c17840">
- <img src="https://img.shields.io/badge/Unmanaged_VPS-DigitalOcean.com-%232f7cf7.svg?style=flat" height="22px"/>
-</a> (USD $5-50+/mo, <a href="https://m.do.co/c/cbc4c0c17840">🎗&nbsp; referral link</a>, <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04">instructions</a>)</li>
-<li><a href="https://www.vultr.com/?ref=7130289">
- <img src="https://img.shields.io/badge/Unmanaged_VPS-Vultr.com-%232337a8.svg?style=flat" height="22px"/>
-</a> (USD $2.5-50+/mo, <a href="https://www.vultr.com/?ref=7130289">🎗&nbsp; referral link</a>, <a href="https://www.vultr.com/docs/install-docker-compose-on-ubuntu-20-04">instructions</a>)</li>
-<li><a href="https://fly.io/">
- <img src="https://img.shields.io/badge/Unmanaged_App-Fly.io-%239a2de6.svg?style=flat" height="22px"/>
-</a> (USD $10-50+/mo, <a href="https://fly.io/docs/hands-on/start/">instructions</a>)</li>
-<li><a href="https://aws.amazon.com/marketplace/pp/Linnovate-Open-Source-Innovation-Support-For-Archi/B08RVW6MJ2"><img src="https://img.shields.io/badge/Unmanaged_VPS-AWS-%23ee8135.svg?style=flat" height="22px"/></a> (USD $60-200+/mo)</li>
-<li><a href="https://azuremarketplace.microsoft.com/en-us/marketplace/apps/meanio.archivebox?ocid=gtmrewards_whatsnewblog_archivebox_vol118"><img src="https://img.shields.io/badge/Unmanaged_VPS-Azure-%237cb300.svg?style=flat" height="22px"/></a> (USD $60-200+/mo)</li>
-<br/>
-<sub><i>Referral links marked 🎗 provide $5-10 of free credit for new users and help pay for our <a href="https://demo.archivebox.io">demo server</a> hosting costs.</i></sub>
-</ul>
-
-For more discussion on managed and paid hosting options see here: <a href="https://github.com/ArchiveBox/ArchiveBox/issues/531">Issue #531</a>.
-
 </details>
 
 <br/>
