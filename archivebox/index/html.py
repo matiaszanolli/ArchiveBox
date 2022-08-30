@@ -140,6 +140,7 @@ def snapshot_icons(snapshot) -> str:
             "git": "🅶",
             "archive_org": "🏛",
             "readability": "🆁",
+            "keywords": "🏷️",
             "mercury": "🅼",
             "warc": "📦"
         }
@@ -191,5 +192,3 @@ def snapshot_icons(snapshot) -> str:
 
     return cache.get_or_set(cache_key, calc_snapshot_icons)
     # return calc_snapshot_icons()
-
-   

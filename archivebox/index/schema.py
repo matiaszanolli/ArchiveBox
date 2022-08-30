@@ -437,6 +437,7 @@ class Link:
             'readability_path': 'readability/content.html',
             'mercury_path': 'mercury/content.html',
             'pdf_path': 'output.pdf',
+            'keywords_path': '[]',
             'screenshot_path': 'screenshot.png',
             'dom_path': 'output.html',
             'archive_org_path': 'https://web.archive.org/web/{}'.format(self.base_url),

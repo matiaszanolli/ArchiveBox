@@ -1,12 +1,14 @@
 <div align="center">
 <em><img src="https://i.imgur.com/5B48E3N.png" height="90px"></em>
-<h1>ArchiveBox-Redux<br/><sub>Open-source self-hosted web archiving.</sub></h1>
-<h2>Fork of <a href="https://github.com/ArchiveBox/ArchiveBox">ArchiveBox with many improvements in progress.</h2>
+<h1>ArchiveBox-Redux<br/><sub>Your blazingly fast Internet crawler.</sub></h1>
+<h2>Fork of <a href="https://github.com/ArchiveBox/ArchiveBox">ArchiveBox</a>with many improvements in progress.</h2>
 
 <h4>The final purpose of this project is to provide a blazing fast, optimized and stable version of ArchiveBox, specially designed for use in servers.</h4>
 
 <h3>⚡️  Running using <a href="https://www.pypy.org/">PyPy</a>'s powerful JIT compiler, it reduces Django's and Python's general overload, leaving all CPU and RAM for those hungry extractors!</h3>
 <h3>⚡️  Built based on the <a href="https://hub.docker.com/r/nvidia/cuda">NVIDIA CUDA Docker image,</a> it's definitely not thought for the casual user, yet a beefy server (or an old gaming rig) will take load to the GPU whenever possible. (ALPHA, though stable)</h3>
+<h3>⚡️  Automatic keyword extraction using KEYBert, a state of the art deep-learning based library with a web-optimized multilanguage model</h3>
+<h3>⚡️  Many calls to libraries like `curl` or `wget` being handled natively and in a more intelligent way (less failures and less messy subprocesses) </h3>
 
 
 ▶️ <a href="https://github.com/ArchiveBox/ArchiveBox/wiki/Quickstart">Quickstart</a> |
@@ -23,22 +25,15 @@ curl -sSL 'https://get.archivebox.io' | sh
 
 <!--<a href="http://webchat.freenode.net?channels=ArchiveBox&uio=d4"><img src="https://img.shields.io/badge/Community_chat-IRC-%2328A745.svg"/></a>-->
 
-<a href="https://github.com/ArchiveBox/ArchiveBox/blob/master/LICENSE"><img src="https://img.shields.io/badge/Open_source-MIT-green.svg?logo=git&logoColor=green"/></a>
-<a href="https://github.com/ArchiveBox/ArchiveBox"><img src="https://img.shields.io/github/stars/ArchiveBox/ArchiveBox.svg?logo=github&label=Stars&logoColor=blue"/></a>
-<a href="https://test.pypi.org/project/archivebox/"><img src="https://img.shields.io/badge/Python-%3E%3D3.7-yellow.svg?logo=python&logoColor=yellow"/></a>
-<a href="https://github.com/ArchiveBox/ArchiveBox/wiki/Install#dependencies"><img src="https://img.shields.io/badge/Chromium-%3E%3D59-orange.svg?logo=Google+Chrome&logoColor=orange"/></a>
-<a href="https://hub.docker.com/r/archivebox/archivebox"><img src="https://img.shields.io/badge/Docker-all%20platforms-lightblue.svg?logo=docker&logoColor=lightblue"/></a><br/>
-<a href="https://github.com/ArchiveBox/ArchiveBox/commits/dev"><img src="https://img.shields.io/github/last-commit/ArchiveBox/ArchiveBox.svg?logo=Sublime+Text&logoColor=green&label=active"/></a>
-<a href="https://lgtm.com/projects/g/ArchiveBox/ArchiveBox/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/ArchiveBox/ArchiveBox.svg?logo=lgtm&logoWidth=18"/></a>
-<a href="https://lgtm.com/projects/g/ArchiveBox/ArchiveBox/context:javascript"><img alt="Language grade: JavaScript" src="https://img.shields.io/lgtm/grade/javascript/g/ArchiveBox/ArchiveBox.svg?logo=lgtm&logoWidth=18"/></a>
-<a href="https://lgtm.com/projects/g/ArchiveBox/ArchiveBox/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/ArchiveBox/ArchiveBox.svg?logo=lgtm&logoWidth=18"/></a>
-
 <hr/>
 </div>
 
-**ArchiveBox is a powerful, self-hosted internet archiving solution to collect, save, and view sites you want to preserve offline.**
+**ArchiveBox-Redux is basically the server alternative to ArchiveBox.**
 
-You can set it up as a [command-line tool](#quickstart), [web app](#quickstart), and [desktop app](https://github.com/ArchiveBox/electron-archivebox) (alpha), on Linux, macOS, and Windows.
+The only requirement you have to fulfill for this moment to run ArchiveBox-Redux is a CUDA-capable card and have the proper drivers (or CUDA Toolkit in Linux), as well as a recent Docker release. 
+
+As far as a CPU-only version, I plan on expanding the using a less accurate model like YAKE for CPU users, which is still pretty good and has an extremely good performance on CPU users. But why let our GPU go to waste if we have one, right?
+
 
 **You can feed it URLs one at a time, or schedule regular imports** from browser bookmarks or history, feeds like RSS, bookmark services like Pocket/Pinboard, and more. See <a href="#input-formats">input formats</a> for a full list.
 

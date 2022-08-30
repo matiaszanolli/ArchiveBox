@@ -46,36 +46,37 @@ class ArchiveResultInline(admin.TabularInline):
 class TagInline(admin.TabularInline):
     model = Snapshot.tags.through
 
-from django.contrib.admin.helpers import ActionForm
+# from django.contrib.admin.helpers import ActionForm
 
-class AutocompleteTags:
-    model = Tag
-    search_fields = ['name']
+# class AutocompleteTags:
+#     model = Tag
+#     search_fields = ['name']
 
-class AutocompleteTagsAdminStub:
-    name = 'admin'
+# class AutocompleteTagsAdminStub:
+#     name = 'admin'
 
 
-class SnapshotActionForm(ActionForm):
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        required=False,
-        # widget=SelectMultiple(
-        #     AutocompleteTags(),
-        #     AutocompleteTagsAdminStub(),
-        # ),
-    )
 
-    # TODO: allow selecting actions for specific extractors? is this useful?
-    # EXTRACTOR_CHOICES = [
-    #     (name, name.title())
-    #     for name, _, _ in get_default_archive_methods()
-    # ]
-    # extractor = forms.ChoiceField(
-    #     choices=EXTRACTOR_CHOICES,
-    #     required=False,
-    #     widget=forms.MultileChoiceField(attrs={'class': "form-control"})
-    # )
+# class SnapshotActionForm(ActionForm):
+#     tags = forms.ModelMultipleChoiceField(
+#         queryset=Tag.objects.all(),
+#         required=False,
+#         # widget=SelectMultiple(
+#         #     AutocompleteTags(),
+#         #     AutocompleteTagsAdminStub(),
+#         # ),
+#     )
+
+#     # TODO: allow selecting actions for specific extractors? is this useful?
+#     # EXTRACTOR_CHOICES = [
+#     #     (name, name.title())
+#     #     for name, _, _ in get_default_archive_methods()
+#     # ]
+#     # extractor = forms.ChoiceField(
+#     #     choices=EXTRACTOR_CHOICES,
+#     #     required=False,
+#     #     widget=forms.MultileChoiceField(attrs={'class': "form-control"})
+#     # )
 
 
 class SnapshotAdmin(SearchResultsAdminMixin, admin.ModelAdmin):
@@ -288,14 +289,11 @@ class SnapshotAdmin(SearchResultsAdminMixin, admin.ModelAdmin):
 
     remove_tags.short_description = "–"
 
-        
-
     title_str.short_description = 'Title'
     url_str.short_description = 'Original URL'
 
     title_str.admin_order_field = 'title'
     url_str.admin_order_field = 'url'
-
 
 
 class TagAdmin(admin.ModelAdmin):

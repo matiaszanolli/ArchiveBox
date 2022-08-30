@@ -28,6 +28,4 @@ docker build . -t archivebox-redux \
                -t docker.io/matiaszanolli/archivebox-redux:latest \
                -t docker.io/matiaszanolli/archivebox-redux:$VERSION \
                -t docker.io/matiaszanolli/archivebox-redux:$SHORT_VERSION \
-               -t docker.pkg.github.com/matiaszanolli/archivebox-redux/archivebox-redux:latest \
-               -t docker.pkg.github.com/matiaszanolli/archivebox-redux/archivebox-redux:$VERSION \
-               -t docker.pkg.github.com/matiaszanolli/archivebox-redux/archivebox-redux:$SHORT_VERSION
+

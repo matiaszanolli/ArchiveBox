@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Optional, List
 
-from django.db import models
+from django.db import models, transaction
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from django.core.cache import cache
@@ -251,9 +251,9 @@ class Snapshot(models.Model):
         for tag in tags:
             if tag.strip():
                 tags_id.append(Tag.objects.get_or_create(name=tag)[0].id)
-        self.tags.clear()
-        self.tags.add(*tags_id)
-
+        with transaction.atomic():
+            self.tags.add(*tags_id)
+            self.save()
 
 class ArchiveResultManager(models.Manager):
     def indexable(self, sorted: bool = True):

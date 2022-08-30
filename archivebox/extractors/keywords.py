@@ -3,12 +3,10 @@ __package__ = 'archivebox.extractors'
 from pathlib import Path
 from typing import Optional
 
-import spacy
-
 from keybert import KeyBERT
-from thinc.api import set_gpu_allocator, require_gpu
+from sentence_transformers import SentenceTransformer
 
-from ..index.schema import Link, ArchiveResult, ArchiveError
+from ..index.schema import Link, ArchiveResult
 from ..util import (
     enforce_types,
     is_static_file
@@ -40,21 +38,22 @@ def save_keywords(link: Link, out_dir: Optional[Path]=None, timeout: int=TIMEOUT
     canonical = link.canonical_outputs()
     abs_path = out_dir.absolute()
     source = canonical["readability_path"]
-    text_content = abs_path / source / "content.txt"
-    status = 'success'
+    text_content = str((abs_path / source)).replace('.html', '.txt')
+    status = 'succeeded'
 
     try:
         with open(text_content, "r") as f:
             text = f.read()
 
-            nlp = spacy.load("all-mpnet-base-v1", exclude=['tagger', 'parser', 'ner', 'attribute_ruler', 'lemmatizer'])
-            set_gpu_allocator("pytorch")
-            require_gpu(0)
-            kw_model = KeyBERT(model=nlp)
-            keywords = kw_model.extract_keywords(text, keyphrase_ngram_range=(1, 1), stop_words='spanish', 
+            sent_trans = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
+            kw_model = KeyBERT(model=sent_trans)
+            # TODO: Detect language and set stopwords according to it
+            keywords = kw_model.extract_keywords(text, keyphrase_ngram_range=(1, 1), stop_words='english', 
                                                         use_mmr=True, diversity=0.3)
-            keywords_list = [kw.lower() for kw in keywords]
-            Snapshot.objects.filter(url=link.url, timestamp=link.timestamp).save_tags(keywords_list)
+            keywords_list = [kw[0].lower() for kw in keywords]
+            snap = Snapshot.objects.get(url=link.url, timestamp=link.timestamp)
+            snap.save_tags(keywords_list)
+            snap.save()
             output = str(keywords_list)
 
     except Exception as err:

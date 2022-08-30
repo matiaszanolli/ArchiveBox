@@ -9,6 +9,7 @@ import argparse
 from math import log
 from multiprocessing import Process
 from pathlib import Path
+
 from datetime import datetime, timezone
 from dataclasses import dataclass
 from typing import Any, Optional, List, Dict, Union, IO, TYPE_CHECKING
@@ -296,6 +297,7 @@ def log_indexing_finished(out_path: str):
 
 
 ### Archiving Stage
+
 def log_archiving_started(num_links: int, resume: Optional[float]=None):
 
     start_ts = datetime.now(timezone.utc)
@@ -570,7 +572,7 @@ def printable_config(config: ConfigDict, prefix: str='') -> str:
 def printable_folder_status(name: str, folder: Dict) -> str:
     if folder['enabled']:
         if folder['is_valid']:
-            color, symbol, note = 'green', '√', 'valid'
+            color, symbol, note, num_files = 'green', '√', 'valid', ''
         else:
             color, symbol, note, num_files = 'red', 'X', 'invalid', '?'
     else:
@@ -585,6 +587,10 @@ def printable_folder_status(name: str, folder: Dict) -> str:
             )
         else:
             num_files = 'missing'
+        
+    if folder.get('is_mount'):
+        # add symbol @ next to filecount if path is a remote filesystem mount
+        num_files = f'{num_files} @' if num_files else '@'
 
     path = str(folder['path']).replace(str(OUTPUT_DIR), '.') if folder['path'] else ''
     if path and ' ' in path:

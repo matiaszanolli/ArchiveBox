@@ -57,6 +57,29 @@ short_ts = lambda ts: str(parse_date(ts).timestamp()).split('.')[0]
 ts_to_date_str = lambda ts: ts and parse_date(ts).strftime('%Y-%m-%d %H:%M')
 ts_to_iso = lambda ts: ts and parse_date(ts).isoformat()
 
+session_storage = {
+    'time': datetime.now(),
+    'counter': 0
+}
+
+# checks if user can perform action and update action time if needed
+def can_perform_action():
+    difference = session_storage['time'] - datetime.now()
+    if difference.seconds > 60: # check if there lasts 24 hours after first action
+        # if so, reset action counter and set last action time to current ime
+        session_storage['counter'] = 0
+        session_storage['time'] = datetime.now()
+    # if action counter is more than 5, then do not allow action
+    if session_storage['counter'] > 12:
+        return False
+    # in all other cases allow action
+    return True
+
+# increment action counter for current user
+def increment_action_counter():
+    session_storage['counter'] += 1
+
+
 URL_REGEX = re.compile(
     r'(?=('
     r'http[s]?://'  # start matching from allowed schemes
@@ -246,11 +269,17 @@ def chrome_args(**options) -> List[str]:
             '--no-sandbox',
             # '--disable-gpu',
             '--use-gl=egl',
+            '--enable-gpu-memory-buffer-video-frames',
+            '--enable-gpu-rasterization',
+            '--enable-nacl',
             '--disable-dev-shm-usage',
             '--disable-software-rasterizer',
             '--run-all-compositor-stages-before-draw',
             '--hide-scrollbars',
             '--single-process',
+            '--bwsi',
+            '--aggressive-cache-discard',
+            '--no-audio',
             '--no-zygote',
         )
 

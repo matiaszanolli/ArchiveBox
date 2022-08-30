@@ -29,6 +29,3 @@ docker-slim build --dockerfile Dockerfile \
                --tag docker.io/matiaszanolli/archivebox-redux:latest-slim \
                --tag docker.io/matiaszanolli/archivebox-redux:$VERSION-slim \
                --tag docker.io/matiaszanolli/archivebox-redux:$SHORT_VERSION-slim \
-               --tag docker.pkg.github.com/matiaszanolli/archivebox-redux/archivebox-redux:latest-slim \
-               --tag docker.pkg.github.com/matiaszanolli/archivebox-redux/archivebox-redux:$VERSION-slim \
-               --tag docker.pkg.github.com/matiaszanolli/archivebox-redux/archivebox-redux:$SHORT_VERSION-slim

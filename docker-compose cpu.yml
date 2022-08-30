@@ -1,0 +1,216 @@
+# Usage:
+#     docker-compose run archivebox init --setup
+#     docker-compose up
+#     echo "https://example.com" | docker-compose run archivebox archivebox add
+#     docker-compose run archivebox add --depth=1 https://example.com/some/feed.rss
+#     docker-compose run archivebox config --set PUBLIC_INDEX=True
+#     docker-compose run archivebox help
+# Documentation:
+#     https://github.com/ArchiveBox/ArchiveBox/wiki/Docker#docker-compose
+
+version: '3.9'   # '3.9' or greater also works
+
+services:
+    archivebox:
+        build: .                              # for developers working on archivebox
+        image: ${DOCKER_IMAGE:-matiaszanolli/archivebox-redux:latest-cpu}
+        restart: always
+        # command: tail -f /dev/null
+        command: server --quick-init 0.0.0.0:8000
+        ports:
+            - 8000:8000
+        environment:
+            - ALLOWED_HOSTS=*                   # add any config options you want as env vars
+            - MEDIA_MAX_SIZE=750m
+            - PG_HOST=host.docker.internal
+            - PG_DATABASE=archivebox
+            - PG_USERNAME=archivebox
+            - PG_PASSWORD=archivebox
+            - DEBUG=1
+            # - SEARCH_BACKEND_ENGINE=sonic     # uncomment these if you enable sonic below
+            # - SEARCH_BACKEND_HOST_NAME=sonic
+            # - SEARCH_BACKEND_PASSWORD=SecretPassword
+        # dns:                                  # uncomment to use pihole below for ad/tracker blocking during archiving
+        #     - pihole
+        # depends_on:
+        #     - cache
+        volumes:
+            - /mnt/archivebox-new:/data
+            - ./archivebox:/archivebox    # for developers working on archivebox
+            - /home/archivebox/cache:/var/lib/cache
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        networks:
+            - default
+    db:
+        image: postgres:14.1-alpine
+        restart: always
+        environment:
+            - POSTGRES_USER=archivebox
+            - POSTGRES_PASSWORD=archivebox
+        ports:
+            - '5432:5432'
+        volumes: 
+            - /home/archivebox/db-data:/var/lib/postgresql/data  
+        networks:
+            - default 
+    
+networks:
+    default:
+        driver: bridge
+        ipam:
+            config:
+                 - subnet: 172.16.57.0/24
+    # cache:
+    #     image: 'redis:latest'
+    #     ports:
+    #         - '6379:6379'
+    #     command: redis-server --save 20 1 --loglevel warning
+    #     volumes: 
+    #         - cache:/data
+    #     networks:
+    #         - default
+    # netdata:
+    #     image: netdata/netdata
+    #     container_name: netdata
+    #     hostname: 192.168.1.8 # set to fqdn of host
+    #     ports:
+    #         - 19999:19999
+    #     restart: unless-stopped
+    #     cap_add:
+    #         - SYS_PTRACE
+    #     security_opt:
+    #         - apparmor:unconfined
+    #     volumes:
+    #         - /mnt/archivebox-new/netdataconfig:/etc/netdata
+    #         - /mnt/archivebox-new/netdatalib:/var/lib/netdata
+    #         - /mnt/archivebox-new/netdatacache:/var/cache/netdata
+    #         - /etc/passwd:/host/etc/passwd:ro
+    #         - /etc/group:/host/etc/group:ro
+    #         - /proc:/host/proc:ro
+    #         - /sys:/host/sys:ro
+    #         - /etc/os-release:/host/etc/os-release:ro
+    #     environment:
+    #         - NETDATA_CLAIM_TOKEN=Junyu-WQSQJJ2-h3qMxmemxSCnr_yDJXHYuo6GwYgeEBDzifuzCyMJRSy2ByIyzTK4TRJSRkZUbNmiBlYY3_yESDQjXIIXvLHjuNF-jZ2GNeQ4kIhUXXT7qa1w0Rom-5zczptrQ
+    #         - NETDATA_CLAIM_URL=https://app.netdata.cloud
+    #         - NETDATA_CLAIM_ROOMS=2fe4a14a-af33-4ade-a693-3ba086912772
+    #     networks:
+    #         - default
+
+# volumes:
+#     cache:
+#         driver: local
+# cache:
+    #     image: 'redis:latest'
+    #     ports:
+    #         - '6379:6379'
+    #     command: redis-server --save 20 1 --loglevel warning
+    #     volumes: 
+    #         - cache:/data
+    #     networks:
+    #         - default
+    # netdata:
+    #     image: netdata/netdata
+    #     container_name: netdata
+    #     hostname: 192.168.1.8 # set to fqdn of host
+    #     ports:
+    #         - 19999:19999
+    #     restart: unless-stopped
+    #     cap_add:
+    #         - SYS_PTRACE
+    #     security_opt:
+    #         - apparmor:unconfined
+    #     volumes:
+    #         - /mnt/archivebox-new/netdataconfig:/etc/netdata
+    #         - /mnt/archivebox-new/netdatalib:/var/lib/netdata
+    #         - /mnt/archivebox-new/netdatacache:/var/cache/netdata
+    #         - /etc/passwd:/host/etc/passwd:ro
+    #         - /etc/group:/host/etc/group:ro
+    #         - /proc:/host/proc:ro
+    #         - /sys:/host/sys:ro
+    #         - /etc/os-release:/host/etc/os-release:ro
+    #     environment:
+    #         - NETDATA_CLAIM_TOKEN=Junyu-WQSQJJ2-h3qMxmemxSCnr_yDJXHYuo6GwYgeEBDzifuzCyMJRSy2ByIyzTK4TRJSRkZUbNmiBlYY3_yESDQjXIIXvLHjuNF-jZ2GNeQ4kIhUXXT7qa1w0Rom-5zczptrQ
+    #         - NETDATA_CLAIM_URL=https://app.netdata.cloud
+    #         - NETDATA_CLAIM_ROOMS=2fe4a14a-af33-4ade-a693-3ba086912772
+    #     networks:
+    #         - default
+    
+    ### Example: To run pihole in order to block ad/tracker requests during archiving,
+    # uncomment this block and set up pihole using its admin interface
+
+    # pihole:
+    #   image: pihole/pihole:latest
+    #   ports:
+    #     - 80:80       # uncomment to access the admin HTTP interface on http://localhost:80
+    #   environment:
+    #     WEBPASSWORD: 'set a secure password here or it will be random'
+    #   volumes:
+    #     - ./data/pihole:/etc/pihole
+    #     - ./data/dnsmasq:/etc/dnsmasq.d
+
+    # To run the Sonic full-text search backend, first download the config file to sonic.cfg
+    # curl -O https://raw.githubusercontent.com/ArchiveBox/ArchiveBox/master/etc/sonic.cfg
+    # after starting, backfill any existing Snapshots into the index: docker-compose run archivebox update --index-only
+
+    # sonic:
+    #    image: valeriansaliou/sonic:v1.3.1
+    #    expose:
+    #        - 1491
+    #    environment:
+    #        - SEARCH_BACKEND_PASSWORD=SecretPassword
+    #    volumes:
+    #        - ./sonic.cfg:/etc/sonic.cfg:ro
+    #        - ./data/sonic:/var/lib/sonic/store
+
+
+
+    # Example: Run scheduled imports in a docker instead of using cron on the
+    # host machine, add tasks and see more info with archivebox schedule --help
+#    scheduler:
+#        image: matiaszanolli/archivebox:latest
+#        command: schedule --foreground --every=day --depth=1 'https://getpocket.com/users/USERNAME/feed/all'
+#        environment:
+#            - USE_COLOR=True
+#            - SHOW_PROGRESS=False
+#        volumes:
+#            - ./data:/data
+
+    # Example: Put Nginx in front of the ArchiveBox server for SSL termination
+#    nginx:
+#         image: nginx:alpine
+#         ports:
+#             - 443:443
+#             - 80:80
+#         volumes:
+#             - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+#             - ./data:/mnt/archivebox
+
+    ### Example: run all your ArchiveBox traffic through a WireGuard VPN tunnel
+
+    # wireguard:
+    #   image: linuxserver/wireguard
+    #   network_mode: 'service:archivebox'
+    #   cap_add:
+    #     - NET_ADMIN
+    #     - SYS_MODULE
+    #   sysctls:
+    #     - net.ipv4.conf.all.rp_filter=2
+    #     - net.ipv4.conf.all.src_valid_mark=1
+    #   volumes:
+    #     - /lib/modules:/lib/modules
+    #     - ./wireguard.conf:/config/wg0.conf:ro
+
+
+    ### Example: Run PYWB in parallel and auto-import WARCs from ArchiveBox
+
+    # pywb:
+    #     image: webrecorder/pywb:latest
+    #     entrypoint: /bin/sh -c '(wb-manager init default || test $$? -eq 2) && wb-manager add default /archivebox/archive/*/warc/*.warc.gz; wayback;'
+    #     environment:
+    #         - INIT_COLLECTION=archivebox
+    #     ports:
+    #         - 8080:8080
+    #     volumes:
+    #         - ./data:/archivebox
+    #         - ./data/wayback:/webarchive

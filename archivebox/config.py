@@ -24,7 +24,6 @@ __package__ = 'archivebox'
 import os
 import os.path
 import io
-import random
 import re
 import sys
 import json
@@ -68,7 +67,7 @@ CONFIG_SCHEMA: Dict[str, ConfigDefaultDict] = {
         'IS_TTY':                   {'type': bool,  'default': lambda _: sys.stdout.isatty()},
         'USE_COLOR':                {'type': bool,  'default': lambda c: c['IS_TTY']},
         'SHOW_PROGRESS':            {'type': bool,  'default': lambda c: (c['IS_TTY'] and platform.system() != 'Darwin')},  # progress bars are buggy on mac, disable for now
-        'IN_DOCKER':                {'type': bool,  'default': False},
+        'IN_DOCKER':                {'type': bool,  'default': True},
         # TODO: 'SHOW_HINTS':       {'type:  bool,  'default': True},
     },
 
@@ -84,6 +83,7 @@ CONFIG_SCHEMA: Dict[str, ConfigDefaultDict] = {
         'URL_WHITELIST':            {'type': str,   'default': None},
         'ENFORCE_ATOMIC_WRITES':    {'type': bool,  'default': True},
         'TAG_SEPARATOR_PATTERN':    {'type': str,   'default': r'[,]'},
+        'IA_USERNAME':              {'type': str,   'default': 'matiaszanolli'},
     },
 
     'SERVER_CONFIG': {

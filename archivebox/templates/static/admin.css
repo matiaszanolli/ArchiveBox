@@ -283,7 +283,7 @@ body.model-snapshot.change-list #content .object-tools {
 .tag {
     float: right;
     border-radius: 5px;
-    background-color: #bfdfff;
+    background-color: hsl(210, 83%, 21%);
     padding: 2px 5px;
     margin-left: 4px;
     margin-top: 1px;

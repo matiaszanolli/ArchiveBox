@@ -218,11 +218,13 @@ def version(quiet: bool=False,
             platform.platform(),
             p.machine,
         )
+        fs_is_mount = os.path.ismount(ARCHIVE_DIR)
         print(
             f'IN_DOCKER={IN_DOCKER}',
             f'DEBUG={DEBUG}',
             f'IS_TTY={IS_TTY}',
             f'TZ={os.environ.get("TZ", "UTC")}',
+            f'FS={"remote" if fs_is_mount else "local"}',
             f'SEARCH_BACKEND_ENGINE={SEARCH_BACKEND_ENGINE}',
         )
         print()

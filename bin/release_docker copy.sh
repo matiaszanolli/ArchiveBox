@@ -18,11 +18,9 @@ cd "$REPO_DIR"
 
 echo "[^] Uploading docker image"
 docker login --username=matiaszanolli
-docker push matiaszanolli/archivebox-redux:$VERSION 
-docker push matiaszanolli/archivebox-redux:$SHORT_VERSION 
-docker push matiaszanolli/archivebox-redux:latest
-docker push docker.io/matiaszanolli/archivebox-redux:$VERSION
-docker push docker.io/matiaszanolli/archivebox-redux:$SHORT_VERSION
-docker push docker.io/matiaszanolli/archivebox-redux:latest
-
-
+docker push matiaszanolli/archivebox-redux:$VERSION-cpu
+docker push matiaszanolli/archivebox-redux:$SHORT_VERSION-cpu
+docker push matiaszanolli/archivebox-redux:latest-cpu
+docker push docker.io/matiaszanolli/archivebox-redux:$VERSION-cpu
+docker push docker.io/matiaszanolli/archivebox-redux:$SHORT_VERSION-cpu
+docker push docker.io/matiaszanolli/archivebox-redux:latest-cpu

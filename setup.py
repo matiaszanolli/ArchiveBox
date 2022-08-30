@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 PKG_NAME = "archivebox"
-DESCRIPTION = "Self-hosted internet archiving solution."
+DESCRIPTION = "Fork of ArchiveBox with many improvements in progress."
 LICENSE = "MIT"
 AUTHOR = "Matías Zanolli"
 AUTHOR_EMAIL="z_killemall@yahoo.com"
@@ -18,7 +18,6 @@ PROJECT_URLS = {
     "Changelog":        f"{REPO_URL}/releases",
     "Roadmap":          f"{REPO_URL}/wiki/Roadmap",
     "Community":        f"{REPO_URL}/wiki/Web-Archiving-Community",
-    "Demo":             f"https://demo.archivebox.io",
     "Donate":           f"{REPO_URL}/wiki/Donations",
 }
 
@@ -36,8 +35,7 @@ INSTALL_REQUIRES = [
     # stdeb.cfg (apt), archivebox.rb (brew), Dockerfile, etc.
     # if there is no apt python3-package equivalent, then vendor it instead in
     # ./archivebox/vendor/
-    "django>=4.0.6,<4.1.0",
-    # "django-redis>=5.2.0",
+    "django>=4.0.7,<4.1.0",
     "django-admin-shell>=1.0.0",
     "django-extensions>=3.1.5",
     "django-queryable-properties>=1.8.2",
@@ -50,16 +48,15 @@ INSTALL_REQUIRES = [
     "mypy-extensions>=0.4.3",
     "psycopg2cffi>=2.9.0",
     "requests>=2.28.0",
+    "sentence-transformers>=2.2.2",
     "spacy>=3.4.1",
     "thinc>=8.1.0",
     "youtube_dl>=2021.12.17",
     "yt-dlp>=2022.5.18",
+    "waybackpy>=3.0.6",
     "w3lib>=1.22.0",
 ]
 EXTRAS_REQUIRE = {
-    # 'sonic': [
-    #     "sonic-client>=0.0.5",
-    # ],
     'dev': [
         "setuptools",
         "twine",
@@ -72,8 +69,6 @@ EXTRAS_REQUIRE = {
         "sphinx-rtd-theme",
         "recommonmark",
         "pytest",
-        "bottle",
-        "stdeb",
         "django-debug-toolbar",
         "djdt_flamegraph",
     ],

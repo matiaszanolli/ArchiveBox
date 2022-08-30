@@ -10,11 +10,11 @@
 #     docker buildx create --use
 #     docker buildx build . --platform=linux/amd64,linux/arm64,linux/arm/v7 --push -t archivebox/archivebox:latest -t archivebox/archivebox:dev
 
-FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu20.04
+FROM ubuntu:20.04
 
 LABEL name="archivebox-redux" \
     maintainer="Matías Zanolli <z_killemall@yahoo.com>" \
-    description="Based on ArchiveBox/ArchiveBox, specially developed with performance and GPU support in mind." \
+    description="Based on ArchiveBox/ArchiveBox, specially developed with performance in mind (CPU Version)." \
     homepage="https://github.com/matiaszanolli/ArchiveBox-redux" \
     documentation="https://github.com/matiaszanolli/ArchiveBox-redux/wiki/Docker#docker"
 
@@ -116,7 +116,7 @@ ADD "./package.json" "$CODE_DIR/archivebox/"
 ADD "./README.md" "$CODE_DIR/archivebox/"
 
 RUN python3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires))' > /tmp/requirements.txt \
-    && pip3 install -r /tmp/requirements.txt --verbose --extra-index-url https://download.pytorch.org/whl/cu116 \
+    && pip3 install -r /tmp/requirements.txt --verbose \ 
     # && pip3 install -v deepspeed --global-option="build_ext" --global-option="-j8" \  
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
