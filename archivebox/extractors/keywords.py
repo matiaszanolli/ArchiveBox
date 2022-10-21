@@ -3,8 +3,8 @@ __package__ = 'archivebox.extractors'
 from pathlib import Path
 from typing import Optional
 
-from keybert import KeyBERT
-from sentence_transformers import SentenceTransformer
+import yake
+from stopwordsiso import stopwords
 
 from ..index.schema import Link, ArchiveResult
 from ..util import (
@@ -45,12 +45,9 @@ def save_keywords(link: Link, out_dir: Optional[Path]=None, timeout: int=TIMEOUT
         with open(text_content, "r") as f:
             text = f.read()
 
-            sent_trans = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
-            kw_model = KeyBERT(model=sent_trans)
+            kw_extractor = yake.KeywordExtractor(top=5, n=1, stopwords=stopwords(["en", "es", "pt"]))
             # TODO: Detect language and set stopwords according to it
-            keywords = kw_model.extract_keywords(text, keyphrase_ngram_range=(1, 1), stop_words='english', 
-                                                        use_mmr=True, diversity=0.3)
-            keywords_list = [kw[0].lower() for kw in keywords]
+            keywords_list = [kw[0] for kw in kw_extractor.extract_keywords(text.lower())]
             snap = Snapshot.objects.get(url=link.url, timestamp=link.timestamp)
             snap.save_tags(keywords_list)
             snap.save()

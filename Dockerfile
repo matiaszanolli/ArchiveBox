@@ -10,7 +10,7 @@
 #     docker buildx create --use
 #     docker buildx build . --platform=linux/amd64,linux/arm64,linux/arm/v7 --push -t archivebox/archivebox:latest -t archivebox/archivebox:dev
 
-FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu20.04
+FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu20.04
 
 LABEL name="archivebox-redux" \
     maintainer="Matías Zanolli <z_killemall@yahoo.com>" \
@@ -40,7 +40,7 @@ ENV CODE_DIR=/app \
     NVM_DIR=/node/.nvm \
     LOCAL_DIR=/.local \
     ARCHIVEBOX_USER="archivebox" \
-    PYTHON_VERSION=3.10.5
+    PYTHON_VERSION=3.10.7
     # PYTHON_VERSION=pypy3.9-7.3.9
 
 ARG TARGETARCH
@@ -52,7 +52,9 @@ RUN groupadd --system $ARCHIVEBOX_USER \
 
 # Install system dependencies
 ADD ./deb /deb
-RUN apt-get update -qq \
+RUN apt-get install -y apt-transport-https && apt-get clean
+RUN apt-get update \
+    && apt-get -y upgrade \
     && apt-get install -y --no-install-recommends \
         make build-essential g++ gfortran libssl-dev zlib1g-dev pipewire libegl1 libx11-dev \
         libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libgles2-mesa freeglut3-dev \
@@ -92,7 +94,7 @@ RUN apt-get update -qq \
 
 # Install nvm and Node
 RUN mkdir -p $NVM_DIR \
-    && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.1/install.sh | bash \
+    && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.2/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
@@ -115,18 +117,18 @@ ADD "./setup.py" "$CODE_DIR/"
 ADD "./package.json" "$CODE_DIR/archivebox/"
 ADD "./README.md" "$CODE_DIR/archivebox/"
 
+
+# Install apt development dependencies
+RUN apt-get update \
+    && apt-get install -qq -y --no-install-recommends \
+        python3 python3-dev python3-pip python3-venv python3-all \
+        dh-python debhelper devscripts dput software-properties-common \
+        python3-distutils python3-setuptools python3-wheel python3-stdeb
 RUN python3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires))' > /tmp/requirements.txt \
     && pip3 install -r /tmp/requirements.txt --verbose --extra-index-url https://download.pytorch.org/whl/cu116 \
     # && pip3 install -v deepspeed --global-option="build_ext" --global-option="-j8" \  
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
-
-# Install apt development dependencies
-# RUN apt-get install -qq \
-#     && apt-get install -qq -y --no-install-recommends \
-#         python3 python3-dev python3-pip python3-venv python3-all \
-#         dh-python debhelper devscripts dput software-properties-common \
-#         python3-distutils python3-setuptools python3-wheel python3-stdeb
 # RUN pypy3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.extras_require["dev"]))' > /tmp/dev_requirements.txt \
 #     && pypy3 -m pip install --quiet -r /tmp/dev_requirements.txt
 

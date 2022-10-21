@@ -25,10 +25,13 @@ from ..logging_util import TimedProgress
 
 @enforce_types
 def should_save_archive_dot_org(link: Link, out_dir: Optional[Path]=None, overwrite: Optional[bool]=False) -> bool:
-    if is_static_file(link.url) or not can_perform_action():
-        return False
+    # Turned off until I figure out how to getting it to worc async alongside other extractors, 
+    # which means managing throttling the requests to archive.org in a common pool
+    return False
+    # if is_static_file(link.url) or not can_perform_action():
+    #     return False
 
-    return SAVE_ARCHIVE_DOT_ORG
+    # return SAVE_ARCHIVE_DOT_ORG
 
 @enforce_types
 def save_archive_dot_org(link: Link, out_dir: Optional[Path]=None, timeout: int=TIMEOUT) -> ArchiveResult:
