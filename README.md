@@ -33,11 +33,9 @@ curl -sSL 'https://get.archivebox.io' | sh
 
 First of all, robustness if what you need and it's what you'll have. Backed by the latest PostgreSQL server and 
 
-The only requirement you have to fulfill for this moment to run ArchiveBox-Redux is a CUDA-capable card and have the proper drivers (or CUDA Toolkit in Linux), as well as a recent Docker release. 
+The only requirements you have to fulfill for this moment to run ArchiveBox-Redux is  either a CUDA-capable card and have the proper drivers (or CUDA Toolkit in Linux) or a decent enough CPU (check the dates on the project please), as well as a recent Docker release. Regarding RAM, you can do with 4/8GB for light tasks, but 16GB is a minimum for intensive parallel crawling. I plan on improving this by reimplementing the usage of Chrome/Chromium to be more efficient in parallel, but it's in the bucket list for now. 
 
-As far as a CPU-only version, you can use the new CPU-only docker-compose file and try how keyword extraction works for you. You can disable it from the settings if you find it too heavy to run. 
-I plan on using a less accurate model like YAKE for CPU users, which is still pretty good and has an extremely good performance on CPU.
-
+The CPU build is stable and snappy now I switched from KEYBert to YAKE as keyword extraction algorithm (the accuracy loss is minimal compared to the insane increase in performance and not being GPU-dependant).
 
 **You can feed it URLs one at a time, or schedule regular imports** from browser bookmarks or history, feeds like RSS, bookmark services like Pocket/Pinboard, and more. See <a href="#input-formats">input formats</a> for a full list.
 
