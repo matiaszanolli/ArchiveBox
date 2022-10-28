@@ -514,7 +514,7 @@ def write_config_file(config: Dict[str, str], out_dir: str=None) -> ConfigDict:
 
     """)
 
-    out_dir = out_dir or Path(os.getenv('OUTPUT_DIR', '.')).resolve()
+    out_dir = out_dir or Path('/data').resolve()
     config_path = Path(out_dir) /  CONFIG_FILENAME
     
     if not config_path.exists():

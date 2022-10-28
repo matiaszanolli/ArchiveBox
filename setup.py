@@ -41,6 +41,9 @@ INSTALL_REQUIRES = [
     "django-queryable-properties>=1.8.3",
     "diskcache>=5.4.0",
     "dateparser>=1.1.1",
+    "gevent>=22.10.1",
+    "greenlet>=1.1.3",
+    "gunicorn>=20.1.0",
     "python-crontab>=2.6.0",
     "croniter>=1.3.7",
     "ipython>=8.5.0",
@@ -54,6 +57,8 @@ INSTALL_REQUIRES = [
     "waybackpy>=3.0.6",
     "w3lib>=2.0.1",
     "yake>=0.4.8",
+    "zope.event>=4.5.0",
+    "zope.interface>=5.5.0",
 ]
 EXTRAS_REQUIRE = {
     'dev': [

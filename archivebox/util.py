@@ -287,7 +287,7 @@ def chrome_args(**options) -> List[str]:
         cmd_args += ('--disable-web-security', '--ignore-certificate-errors')
 
     if options['CHROME_USER_AGENT']:
-        cmd_args += ('--user-agent={}'.format(UserAgentFormatter(options['CHROME_USER_AGENT']).get_agent()),)
+        cmd_args += ('--user-agent="{}"'.format(UserAgentFormatter(options['CHROME_USER_AGENT']).get_agent()),)
 
     if options['RESOLUTION']:
         cmd_args += ('--window-size={}'.format(options['RESOLUTION']),)
@@ -304,8 +304,9 @@ def chrome_args(**options) -> List[str]:
 class UserAgentFormatter:
 
     def __init__(self, user_agent):
+        from .config import OUTPUT_DIR  # type: ignore
         self.user_agent = user_agent
-        self.user_agents_path = './user_agents.txt'
+        self.user_agents_path =  str(OUTPUT_DIR / 'user_agents.txt')
 
         if not user_agent or user_agent.lower() == 'random':
             # Load list of user agents to pick a random one for each request

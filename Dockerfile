@@ -10,7 +10,7 @@
 #     docker buildx create --use
 #     docker buildx build . --platform=linux/amd64,linux/arm64,linux/arm/v7 --push -t archivebox/archivebox:latest -t archivebox/archivebox:dev
 
-FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu20.04
+FROM nvidia/cuda:11.8.0-runtime-ubuntu20.04
 
 LABEL name="archivebox-redux" \
     maintainer="Matías Zanolli <z_killemall@yahoo.com>" \
@@ -39,9 +39,10 @@ ENV CODE_DIR=/app \
     NODE_VERSION=16 \
     NVM_DIR=/node/.nvm \
     LOCAL_DIR=/.local \
+    OUTPUT_DIR=/data \
     ARCHIVEBOX_USER="archivebox" \
-    PYTHON_VERSION=3.10.7
-    # PYTHON_VERSION=pypy3.9-7.3.9
+    # PYTHON_VERSION=3.10.7
+    PYTHON_VERSION=pypy3.9-7.3.9
 
 ARG TARGETARCH
 
@@ -75,11 +76,11 @@ RUN curl https://pyenv.run | bash \
     && pyenv rehash
 
 # Update PyPy version to current upstream
-# RUN wget --no-check-certificate https://buildbot.pypy.org/nightly/py3.9/pypy-c-jit-latest-linux64.tar.bz2 \
-#     && tar -xvf pypy-c-jit-latest-linux64.tar.bz2 \
-#     && cp -rf pypy-c-jit-*-linux64 ${PYENV_ROOT}/versions/${PYTHON_VERSION} \
-#     && rm -rf pypy-c-jit-*-linux64 \
-#     && rm pypy-c-jit-latest-linux64.tar.bz2
+RUN wget --no-check-certificate https://buildbot.pypy.org/nightly/py3.9/pypy-c-jit-latest-linux64.tar.bz2 \
+    && tar -xvf pypy-c-jit-latest-linux64.tar.bz2 \
+    && cp -rf pypy-c-jit-*-linux64 ${PYENV_ROOT}/versions/${PYTHON_VERSION} \
+    && rm -rf pypy-c-jit-*-linux64 \
+    && rm pypy-c-jit-latest-linux64.tar.bz2
 
 # Install apt dependencies
 RUN apt-get update -qq \

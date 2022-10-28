@@ -4,6 +4,7 @@ source /root/.bashrc
 export PYENV_ROOT=/root/.pyenv
 export NODE_ROOT=/node
 export NVM_DIR=$NODE_ROOT/.nvm
+export APP_DIR=/app/archivebox
 export PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$NODE_ROOT:$NVM_DIR:$PATH
 
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
@@ -39,7 +40,6 @@ else
 fi
 chown $ARCHIVEBOX_USER:$ARCHIVEBOX_USER "$DATA_DIR"
 
-
 # Drop permissions to run commands as the archivebox user
 if [[ "$1" == /* || "$1" == "echo" || "$1" == "archivebox" ]]; then
     # arg 1 is a binary, execute it verbatim
@@ -47,16 +47,16 @@ if [[ "$1" == /* || "$1" == "echo" || "$1" == "archivebox" ]]; then
     #      "/bin/bash"
     #      "echo"
     (
-        echo exec gosu "$ARCHIVEBOX_USER" bash -c "python -m $*"
+        echo exec gosu "$ARCHIVEBOX_USER" bash -c "python -m gunicorn core.wsgi:application --bind 0.0.0.0:8000 --chdir $APP_DIR --reload --workers 8 --timeout 3600 -k gevent"
     )
     if [ $? != 0 ]
     then
-        exec gosu "$ARCHIVEBOX_USER" bash -c "$*"
+        exec gosu "$ARCHIVEBOX_USER" bash -c "python -m gunicorn core.wsgi:application --bind 0.0.0.0:8000 --chdir $APP_DIR --reload --workers 8 --timeout 3600 -k gevent"
     fi
 else
     # no command given, assume args were meant to be passed to archivebox cmd
     # e.g. "add https://example.com"
     #      "manage createsupseruser"
     #      "server 0.0.0.0:8000"
-    exec gosu "$ARCHIVEBOX_USER" bash -c "python -m archivebox $*"
+    exec gosu "$ARCHIVEBOX_USER" bash -c "python -m gunicorn core.wsgi:application --bind 0.0.0.0:8000 --chdir $APP_DIR --reload --workers 8 --timeout 3600 -k gevent"
 fi
