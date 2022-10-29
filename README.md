@@ -1,15 +1,16 @@
 <div align="center">
 <em><img src="https://i.imgur.com/5B48E3N.png" height="90px"></em>
 <h1>ArchiveBox-Redux<br/><sub>Your blazingly fast Internet crawler.</sub></h1>
-<h2>Fork of <a href="https://github.com/ArchiveBox/ArchiveBox">ArchiveBox</a>with many improvements in progress.</h2>
+<h2>Fork of <a href="https://github.com/ArchiveBox/ArchiveBox">ArchiveBox</a> with many improvements in progress.</h2>
 
-<h4>The final purpose of this project is to provide a blazing fast, optimized and stable version of ArchiveBox, specially designed for use in servers.</h4>
+<h4>The final purpose of this project is to provide a sturdy, optimized and overall fast version of ArchiveBox, specially designed for use in servers and high-load environments.</h4>
 
 <h3>⚡️  Running using <a href="https://www.pypy.org/">PyPy</a>'s powerful JIT compiler, it reduces Django's and Python's general overload, leaving all CPU and RAM for those hungry extractors!</h3>
+<h3>⚡️  Switch SQLite for PostgreSQL as the database default backend for robustness and performance
 <h3>⚡️  Built based on the <a href="https://hub.docker.com/r/nvidia/cuda">NVIDIA CUDA Docker image,</a> it's definitely not thought for the casual user, yet a beefy server (or an old gaming rig) will take load to the GPU whenever possible. (ALPHA, though stable)</h3>
-<h3>⚡️  Automatic keyword extraction using KEYBert, a state of the art deep-learning based library with a web-optimized multilanguage model</h3>
+<h3>⚡️  Automatic keyword extraction using YAKE, a state of the art and blazingly fast keyword extractor</h3>
 <h3>⚡️  Many calls to libraries like `curl` or `wget` being handled natively and in a more intelligent way (less failures and less messy subprocesses) </h3>
-<h3>⚡️Better subprocess handling (No idle tasks!)</h3>
+<h3>⚡️  Better subprocess handling (No idle tasks!)</h3>
 
 
 ▶️ <a href="https://github.com/ArchiveBox/ArchiveBox/wiki/Quickstart">Quickstart</a> |
