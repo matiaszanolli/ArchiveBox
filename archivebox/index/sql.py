@@ -44,14 +44,14 @@ def write_link_to_sql_index(link: Link):
     ))
     info.pop('tags')
 
-    try:
-        info["timestamp"] = Snapshot.objects.get(url=link.url).timestamp
-    except Snapshot.DoesNotExist:
-        while Snapshot.objects.filter(timestamp=info["timestamp"]).exists():
-            info["timestamp"] = str(float(info["timestamp"]) + 1.0)
-
+    snaps = Snapshot.objects.filter(url=link.url)
+    if snaps:
+        snapshot = snaps[0]
+        info["timestamp"] = snapshot.timestamp
+    else:
         snapshot, _ = Snapshot.objects.update_or_create(url=link.url, defaults=info)
-    snapshot.save_tags(tag_list)
+
+    # snapshot.save_tags(tag_list)
 
     for extractor, entries in link.history.items():
         for entry in entries:
@@ -111,12 +111,12 @@ def write_sql_link_details(link: Link, out_dir: Path=OUTPUT_DIR) -> None:
         snap = write_link_to_sql_index(link)
     snap.title = link.title
 
-    tag_list = list(dict.fromkeys(
-        tag.strip() for tag in re.split(TAG_SEPARATOR_PATTERN, link.tags or '')
-    ))
+    # tag_list = list(dict.fromkeys(
+    #     tag.strip() for tag in re.split(TAG_SEPARATOR_PATTERN, link.tags or '')
+    # ))
 
     snap.save()
-    snap.save_tags(tag_list)
+    # snap.save_tags(tag_list)
 
 
 

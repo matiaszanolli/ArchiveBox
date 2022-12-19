@@ -42,7 +42,7 @@ ENV CODE_DIR=/app \
     OUTPUT_DIR=/data \
     ARCHIVEBOX_USER="archivebox" \
     # PYTHON_VERSION=3.10.7
-    PYTHON_VERSION=pypy3.9-7.3.9
+    PYTHON_VERSION=pypy3.9-7.3.10
 
 ARG TARGETARCH
 

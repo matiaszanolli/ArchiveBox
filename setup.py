@@ -50,6 +50,7 @@ INSTALL_REQUIRES = [
     "mypy-extensions>=0.4.3",
     "psycopg2cffi>=2.9.0",
     "requests>=2.28.1",
+    "sonic-client>=0.0.5",
     "stopwordsiso>=0.6.1",
     "thinc>=8.1.4",
     "youtube_dl>=2021.12.17",

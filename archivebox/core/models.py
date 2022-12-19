@@ -5,7 +5,7 @@ import uuid
 import json
 
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 from django.db import models, transaction
 from django.utils.functional import cached_property
@@ -94,7 +94,7 @@ class Snapshot(models.Model):
 
     added = models.DateTimeField(auto_now_add=True, db_index=True)
     updated = models.DateTimeField(auto_now=True, blank=True, null=True, db_index=True)
-    tags = models.ManyToManyField(Tag, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True, through='SnapshotTag')
 
     keys = ('url', 'timestamp', 'title', 'tags', 'updated')
 
@@ -127,13 +127,13 @@ class Snapshot(models.Model):
         return load_link_details(self.as_link())
 
     def tags_str(self, nocache=True) -> str:
-        cache_key = f'{self.id}-{(self.updated or self.added).timestamp()}-tags'
+        # cache_key = f'{self.id}-{(self.updated or self.added).timestamp()}-tags'
         calc_tags_str = lambda: ','.join(self.tags.order_by('name').values_list('name', flat=True))
-        if nocache:
-            tags_str = calc_tags_str()
-            cache.set(cache_key, tags_str)
-            return tags_str
-        return cache.get_or_set(cache_key, calc_tags_str)
+        # if nocache:
+        tags_str = calc_tags_str()
+        # cache.set(cache_key, tags_str)
+        return tags_str
+        # return cache.get_or_set(cache_key, calc_tags_str)
 
     def icons(self) -> str:
         return snapshot_icons(self)
@@ -246,14 +246,33 @@ class Snapshot(models.Model):
 
         return None
 
-    def save_tags(self, tags: List[str]=()) -> None:
+    def save_tags(self, tags) -> None:
+        tags_obj = []
         tags_id = []
-        for tag in tags:
-            if tag.strip():
-                tags_id.append(Tag.objects.get_or_create(name=tag)[0].id)
+        for tag, score in tags:
+            if tag and tag.strip():
+                tag_obj = Tag.objects.get_or_create(name=tag.strip())[0]
+                tag_id = tag_obj.id
+                SnapshotTag.objects.get_or_create(snapshot_id=self.id, tag_id=tag_id, score=score)
+                if tag_id not in tags_id:
+                    tags_id.append(tag_id)
+                    tags_obj.append(tag_obj)
         with transaction.atomic():
-            self.tags.add(*tags_id)
+            self.tags.add(*tags_obj)
             self.save()
+
+
+class SnapshotTag(models.Model):
+    snapshot = models.ForeignKey(Snapshot, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    score = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.tag.name
+    
+    class Meta:
+        unique_together = ('snapshot_id', 'tag_id',)
+
 
 class ArchiveResultManager(models.Manager):
     def indexable(self, sorted: bool = True):

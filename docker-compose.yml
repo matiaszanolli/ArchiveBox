@@ -28,9 +28,9 @@ services:
             - PG_USERNAME=archivebox
             - PG_PASSWORD=archivebox
             - DEBUG=1
-            # - SEARCH_BACKEND_ENGINE=sonic     # uncomment these if you enable sonic below
-            # - SEARCH_BACKEND_HOST_NAME=sonic
-            # - SEARCH_BACKEND_PASSWORD=SecretPassword
+            - SEARCH_BACKEND_ENGINE=sonic     # uncomment these if you enable sonic below
+            - SEARCH_BACKEND_HOST_NAME=sonic
+            - SEARCH_BACKEND_PASSWORD=SecretPassword
         # dns:                                  # uncomment to use pihole below for ad/tracker blocking during archiving
         #     - pihole
         # depends_on:
@@ -71,6 +71,15 @@ services:
             - archivebox
         networks:
             - default 
+    sonic:
+       image: valeriansaliou/sonic:v1.3.1
+       expose:
+           - 1491
+       environment:
+           - SEARCH_BACKEND_PASSWORD=SecretPassword
+       volumes:
+           - ./sonic.cfg:/etc/sonic.cfg:ro
+           - ./data/sonic:/var/lib/sonic/store
 
     
 networks:
@@ -79,15 +88,6 @@ networks:
         ipam:
             config:
                  - subnet: 172.16.57.0/24
-    # cache:
-    #     image: 'redis:latest'
-    #     ports:
-    #         - '6379:6379'
-    #     command: redis-server --save 20 1 --loglevel warning
-    #     volumes: 
-    #         - cache:/data
-    #     networks:
-    #         - default
     # netdata:
     #     image: netdata/netdata
     #     container_name: netdata
@@ -170,19 +170,6 @@ networks:
     # To run the Sonic full-text search backend, first download the config file to sonic.cfg
     # curl -O https://raw.githubusercontent.com/ArchiveBox/ArchiveBox/master/etc/sonic.cfg
     # after starting, backfill any existing Snapshots into the index: docker-compose run archivebox update --index-only
-
-    # sonic:
-    #    image: valeriansaliou/sonic:v1.3.1
-    #    expose:
-    #        - 1491
-    #    environment:
-    #        - SEARCH_BACKEND_PASSWORD=SecretPassword
-    #    volumes:
-    #        - ./sonic.cfg:/etc/sonic.cfg:ro
-    #        - ./data/sonic:/var/lib/sonic/store
-
-
-
     # Example: Run scheduled imports in a docker instead of using cron on the
     # host machine, add tasks and see more info with archivebox schedule --help
 #    scheduler:
